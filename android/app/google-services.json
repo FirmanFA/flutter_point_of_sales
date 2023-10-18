@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "881753896128",
+    "project_id": "point-of-sales-app-fbe2e",
+    "storage_bucket": "point-of-sales-app-fbe2e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:881753896128:android:f32485e60b8a724dffa925",
+        "android_client_info": {
+          "package_name": "com.kasir.pos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6AwnqLeEBeu3IZd3WUySxmfynt8ndce0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
