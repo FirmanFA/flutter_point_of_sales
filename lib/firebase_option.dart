@@ -41,7 +41,7 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDpxR6cWU2M51VW10HRmhJ_ivCUL6vD91A',
+    apiKey: '',
     appId: "1:881753896128:android:f32485e60b8a724dffa925",
     messagingSenderId: '881753896128',
     projectId: 'point-of-sales-app-fbe2e',
