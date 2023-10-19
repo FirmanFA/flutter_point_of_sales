@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:point_of_sales/constant/constant.dart';
+import 'package:point_of_sales/widget/default_app_bar.dart';
 
 class PaymentPage extends GetView {
   const PaymentPage({Key? key}) : super(key: key);

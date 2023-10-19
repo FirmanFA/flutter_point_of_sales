@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:point_of_sales/constant/constant.dart';
 
 class CustomTextInput extends StatelessWidget {
@@ -8,6 +9,7 @@ class CustomTextInput extends StatelessWidget {
   final TextEditingController controller;
   final TextInputType? inputType;
   final bool isPassword;
+  final Icon? icon;
 
   const CustomTextInput(
       {Key? key,
@@ -15,7 +17,7 @@ class CustomTextInput extends StatelessWidget {
       required this.hint,
       required this.controller,
       this.inputType,
-      this.isPassword = false})
+      this.isPassword = false, this.icon})
       : super(key: key);
 
   @override
@@ -24,18 +26,24 @@ class CustomTextInput extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Color(0xFF2A3256),
-            fontSize: 16,
-            letterSpacing: 0.4,
-            fontFamily: 'Rubik',
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        SizedBox(
-          height: 8,
+        label == "" ? SizedBox.shrink() : Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                color: Color(0xFF2A3256),
+                fontSize: 16,
+                letterSpacing: 0.4,
+                fontFamily: 'Rubik',
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(
+              height: 8,
+            ),
+          ],
         ),
         TextFormField(
           cursorColor: primaryColor,
@@ -52,6 +60,7 @@ class CustomTextInput extends StatelessWidget {
               fontFamily: 'Rubik',
               fontWeight: FontWeight.w400,
             ),
+            suffixIcon: icon,
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             border: OutlineInputBorder(
