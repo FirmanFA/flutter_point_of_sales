@@ -6,6 +6,7 @@ import 'package:point_of_sales/constant/constant.dart';
 import 'package:point_of_sales/presentation/login/login_controller.dart';
 import 'package:point_of_sales/presentation/login/login_page.dart';
 import 'package:point_of_sales/presentation/main/main_controller.dart';
+import 'package:point_of_sales/presentation/product/product_controller.dart';
 
 import 'counter_controller.dart';
 import 'firebase_option.dart';
@@ -19,6 +20,7 @@ void main() async {
 
   Get.lazyPut(()=>LoginController());
   Get.lazyPut(()=>MainController());
+  Get.put(ProductController());
 
   runApp(GetMaterialApp(
       theme: ThemeData(

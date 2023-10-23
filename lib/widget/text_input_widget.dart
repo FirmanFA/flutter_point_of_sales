@@ -10,6 +10,7 @@ class CustomTextInput extends StatelessWidget {
   final TextInputType? inputType;
   final bool isPassword;
   final Icon? icon;
+  final Function(String)? onChanged;
 
   const CustomTextInput(
       {Key? key,
@@ -17,7 +18,7 @@ class CustomTextInput extends StatelessWidget {
       required this.hint,
       required this.controller,
       this.inputType,
-      this.isPassword = false, this.icon})
+      this.isPassword = false, this.icon, this.onChanged})
       : super(key: key);
 
   @override
@@ -50,6 +51,7 @@ class CustomTextInput extends StatelessWidget {
           controller: controller,
           keyboardType: inputType,
           obscureText: isPassword,
+          onChanged: onChanged,
           decoration: InputDecoration(
             fillColor: Colors.black.withOpacity(0.05),
             filled: true,

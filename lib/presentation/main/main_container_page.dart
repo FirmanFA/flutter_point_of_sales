@@ -6,6 +6,7 @@ import 'package:point_of_sales/constant/constant.dart';
 import 'package:point_of_sales/presentation/home/home_page.dart';
 import 'package:point_of_sales/presentation/login/login_page.dart';
 import 'package:point_of_sales/presentation/main/main_controller.dart';
+import 'package:point_of_sales/presentation/order/order_page.dart';
 import 'package:point_of_sales/presentation/product/product_page.dart';
 
 import '../payment/payment_page.dart';
@@ -31,7 +32,7 @@ class MainContainerPage extends GetView<MainController> {
             height: 60,
             child: FloatingActionButton(
               onPressed: () {
-                Get.to(PaymentPage());
+                Get.to(OrderPage(),transition: Transition.downToUp);
               },
               shape: CircleBorder(),
               child: Padding(
@@ -54,7 +55,6 @@ class MainContainerPage extends GetView<MainController> {
                   FontAwesomeIcons.solidUser
                 ],
                 backgroundColor: Colors.white,
-
                 iconSize: 20,
                 activeColor: primaryColor,
                 inactiveColor: Colors.grey.shade400,

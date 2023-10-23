@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:intl/intl.dart';
 import 'package:point_of_sales/constant/constant.dart';
+import 'package:point_of_sales/presentation/product/dialog/input_product_dialog.dart';
 import 'package:point_of_sales/presentation/product/product_controller.dart';
 import 'package:point_of_sales/widget/card/product_card.dart';
 import 'package:point_of_sales/widget/default_app_bar.dart';
@@ -12,20 +13,18 @@ import 'package:point_of_sales/widget/default_app_bar.dart';
 import '../../widget/card/transaction_card.dart';
 import '../../widget/text_input_widget.dart';
 
-class ProductPage extends StatelessWidget {
+class ProductPage extends GetView<ProductController> {
   const ProductPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(ProductController());
 
     controller.onInit();
 
     return Obx(() => Scaffold(
           appBar: defaultAppBar('Barang'),
-          body: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            padding: EdgeInsets.all(16),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,7 +33,7 @@ class ProductPage extends StatelessWidget {
                   height: 6,
                 ),
                 Text(
-                  "Jumlah Barang : 12",
+                  "Jumlah Barang : ${controller.productCount.value}",
                   style: TextStyle(
                     color: primaryColor,
                     fontSize: 14,
@@ -47,6 +46,9 @@ class ProductPage extends StatelessWidget {
                 CustomTextInput(
                     label: "",
                     hint: "Masukkan pencarian...",
+                    onChanged: (keyword) {
+                      controller.getProducts();
+                    },
                     icon: Icon(
                       FontAwesomeIcons.magnifyingGlass,
                       size: 18,
@@ -144,6 +146,7 @@ class ProductPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                         onChanged: (value) {
                           controller.setSelectedCategory(value ?? 0);
+                          controller.getProducts();
                         },
                         selectedItemBuilder: (context) {
                           return controller.productCategoryList
@@ -174,29 +177,51 @@ class ProductPage extends StatelessWidget {
                   height: 22,
                 ),
 
-                ListView.separated(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      final productDetail = controller.productList[index];
+                Expanded(
+                  child: ListView.separated(
+                      physics: BouncingScrollPhysics(),
+                      padding: EdgeInsets.only(bottom: 32),
+                      itemBuilder: (context, index) {
+                        final productDetail = controller.filteredProductList[index];
 
-                      return ProductCard(
-                        name: productDetail.get("product_name"),
-                        stock: productDetail.get("product_stock").toString(),
-                        price: NumberFormat.simpleCurrency(
-                            locale: "id", name: "Rp. ", decimalDigits: 0)
-                            .format(productDetail.get("product_price")) ,
-                        category: productDetail.get("product_category"),
-                        id: productDetail.id,
-                      );
-                    },
-                    separatorBuilder: (context, index) => SizedBox(
-                          height: 12,
-                        ),
-                    itemCount: controller.productCount.value),
-                SizedBox(
-                  height: 32,
-                )
+                        return ProductCard(
+                          name: productDetail.get("product_name"),
+                          stock: productDetail.get("product_stock").toString(),
+                          price: NumberFormat.simpleCurrency(
+                                  locale: "id", name: "Rp. ", decimalDigits: 0)
+                              .format(productDetail.get("product_price")),
+                          category: productDetail.get("product_category"),
+                          id: productDetail.id,
+                          data: productDetail,
+                          onDeleteClick: (data) {
+                            controller.deleteProduct(data);
+                          },
+                          onUpdateClick: (data) {
+                            controller.nameCon.text = data.get("product_name");
+                            controller.priceCon.text =
+                                data.get("product_price").toString();
+                            controller.stockCon.text =
+                                data.get("product_stock").toString();
+
+                            controller.setSelectedInputCategory(controller
+                                .rawProductCategoryList
+                                .indexOf(controller.rawProductCategoryList
+                                    .firstWhere((element) =>
+                                        element.get("category") ==
+                                        data.get("product_category"))));
+
+                            inputProductDialog(
+                                controller: controller,
+                                isEdit: true,
+                                id: data.id);
+                          },
+                        );
+                      },
+                      separatorBuilder: (context, index) => SizedBox(
+                            height: 12,
+                          ),
+                      itemCount: controller.productCount.value),
+                ),
               ],
             ),
           ),
@@ -232,128 +257,7 @@ class ProductPage extends StatelessWidget {
                   ),
                 ),
                 onTap: () {
-                  Get.defaultDialog(
-                      title: "Tambah Barang",
-                      titlePadding: EdgeInsets.all(16),
-                      content: Obx(() => SingleChildScrollView(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Kategori Barang",
-                                  style: TextStyle(
-                                    color: Color(0xFF2A3256),
-                                    fontSize: 16,
-                                    letterSpacing: 0.4,
-                                    fontFamily: 'Rubik',
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 8,
-                                ),
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(12),
-                                    clipBehavior: Clip.antiAlias,
-                                    decoration: ShapeDecoration(
-                                      color: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                        side: const BorderSide(
-                                            width: 0.50,
-                                            color: Color(0xFFE0E0E0)),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton<int>(
-                                        value: controller
-                                            .selectedInputCategory.value,
-                                        style: const TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.black87),
-                                        isDense: true,
-                                        // iconEnabledColor: Colors.white,
-                                        // iconDisabledColor: Colors.white,
-                                        borderRadius: BorderRadius.circular(12),
-                                        onChanged: (value) {
-                                          controller.setSelectedInputCategory(
-                                              value ?? 0);
-                                        },
-                                        items: controller.productCategoryList
-                                            .map<DropdownMenuItem<int>>(
-                                                (dynamic value) {
-                                          return DropdownMenuItem<int>(
-                                            value: controller
-                                                .productCategoryList
-                                                .indexOf(value),
-                                            child: Text(
-                                              toBeginningOfSentenceCase(
-                                                      value) ??
-                                                  "",
-                                              style: const TextStyle(
-                                                  color: Colors.black),
-                                            ),
-                                          );
-                                        }).toList(),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                CustomTextInput(
-                                    label: "Nama Barang",
-                                    hint: "Masukkan nama barang",
-                                    controller: controller.nameCon),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                CustomTextInput(
-                                    label: "Harga Barang",
-                                    inputType: TextInputType.number,
-                                    hint: "Masukkan harga barang",
-                                    controller: controller.priceCon),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                CustomTextInput(
-                                    label: "Stok",
-                                    hint: "Masukkan stok barang",
-                                    inputType: TextInputType.number,
-                                    controller: controller.stockCon),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                              ],
-                            ),
-                          )),
-                      contentPadding: EdgeInsets.all(16),
-                      textConfirm: "Tambah",
-                      onConfirm: () async {
-                        if (controller.nameCon.text.isNotEmpty &&
-                            controller.priceCon.text.isNotEmpty &&
-                            controller.stockCon.text.isNotEmpty) {
-                          await controller.addProduct(
-                              name: controller.nameCon.text,
-                              price: int.parse(controller.priceCon.text),
-                              stock: int.parse(controller.stockCon.text),
-                              category: controller.productCategoryList[
-                                  controller.selectedInputCategory.value]);
-                        } else {
-                          Get.snackbar("Waring", "All field must be filled",
-                              colorText: Colors.white,
-                              backgroundColor: Colors.deepOrange,
-                              snackPosition: SnackPosition.BOTTOM,
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 44));
-                        }
-                      },
-                      confirmTextColor: Colors.white,
-                      textCancel: "Batal");
+                  inputProductDialog(controller: controller, isEdit: false);
                 },
               ),
               SpeedDialChild(
@@ -374,7 +278,177 @@ class ProductPage extends StatelessWidget {
                         textAlign: TextAlign.start),
                   ),
                 ),
-                onTap: () {},
+                onTap: () {
+                  Get.bottomSheet(
+                    Obx(() => Container(
+                          padding: EdgeInsets.all(16),
+                          constraints:
+                              BoxConstraints(maxHeight: Get.height / 1.5),
+                          decoration: ShapeDecoration(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(12),
+                                      topLeft: Radius.circular(12)))),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 12,
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Expanded(
+                                    child: CustomTextInput(
+                                        label: "Tambah Jenis Barang",
+                                        hint: "contoh: kosmetik",
+                                        controller:
+                                            controller.inputCategoryCon),
+                                  ),
+                                  SizedBox(
+                                    width: 12,
+                                  ),
+                                  MaterialButton(
+                                      onPressed: () {
+                                        controller.addProductCategory();
+                                      },
+                                      color: primaryColor,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      padding: EdgeInsets.all(12),
+                                      child: Icon(
+                                        FontAwesomeIcons.plus,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ))
+                                ],
+                              ),
+                              SizedBox(
+                                height: 16,
+                              ),
+                              Text(
+                                "Daftar Jenis Barang",
+                                style: TextStyle(
+                                  color: Color(0xFF2A3256),
+                                  fontSize: 16,
+                                  letterSpacing: 0.4,
+                                  fontFamily: 'Rubik',
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 12,
+                              ),
+                              Expanded(
+                                child: ListView.separated(
+                                    physics: BouncingScrollPhysics(),
+                                    itemBuilder: (context, index) {
+                                      return Container(
+                                        padding: EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            color: Colors.white,
+                                            border: Border.all(
+                                                color: Colors.grey.shade200)),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              controller
+                                                  .rawProductCategoryList[index]
+                                                  .get("category"),
+                                              style: TextStyle(
+                                                color: Color(0xFF2A3256),
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            Spacer(),
+                                            PopupMenuButton(
+                                              onSelected: (value) async {
+                                                if (value == 1) {
+                                                  controller.editProductCategory(
+                                                      controller
+                                                              .rawProductCategoryList[
+                                                          index]);
+                                                } else {
+                                                  controller.deleteProductCategory(
+                                                      controller
+                                                              .rawProductCategoryList[
+                                                          index]);
+                                                }
+                                              },
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12)),
+                                              itemBuilder:
+                                                  (BuildContext context) => [
+                                                const PopupMenuItem(
+                                                  value: 1,
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        FontAwesomeIcons
+                                                            .solidPenToSquare,
+                                                        color: Colors.blue,
+                                                        size: 14,
+                                                      ),
+                                                      SizedBox(
+                                                        width: 12,
+                                                      ),
+                                                      Text('Ubah'),
+                                                    ],
+                                                  ),
+                                                ),
+                                                const PopupMenuItem(
+                                                  value: 2,
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        FontAwesomeIcons.trash,
+                                                        color: Colors.red,
+                                                        size: 14,
+                                                      ),
+                                                      SizedBox(
+                                                        width: 12,
+                                                      ),
+                                                      Text('Hapus'),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(4.0),
+                                                child: Icon(
+                                                  FontAwesomeIcons
+                                                      .ellipsisVertical,
+                                                  color: Colors.grey.shade400,
+                                                  size: 18,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                    separatorBuilder: (context, index) =>
+                                        SizedBox(
+                                          height: 8,
+                                        ),
+                                    itemCount: controller
+                                        .rawProductCategoryList.length),
+                              )
+                            ],
+                          ),
+                        )),
+                    isScrollControlled: true,
+                  );
+                },
               ),
             ],
           ),

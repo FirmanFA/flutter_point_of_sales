@@ -41,10 +41,11 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: '',
+    apiKey: 'AIzaSyD6AwnqLeEBeu3IZd3WUySxmfynt8ndce0',
     appId: "1:881753896128:android:f32485e60b8a724dffa925",
     messagingSenderId: '881753896128',
     projectId: 'point-of-sales-app-fbe2e',
+    storageBucket: 'point-of-sales-app-fbe2e.appspot.com'
   );
 
   static const FirebaseOptions ios = FirebaseOptions(

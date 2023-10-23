@@ -4,25 +4,27 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:point_of_sales/constant/constant.dart';
 
-class ProductCard extends StatelessWidget {
+class ProductTransactionCard extends StatelessWidget {
   final String name;
   final String category;
   final String price;
   final String stock;
   final String id;
+  final int cartCount;
   final QueryDocumentSnapshot data;
-  final Function(QueryDocumentSnapshot) onDeleteClick;
-  final Function(QueryDocumentSnapshot) onUpdateClick;
+  final Function(QueryDocumentSnapshot) onPlusClick;
+  final Function(QueryDocumentSnapshot) onMinusClick;
 
-  const ProductCard(
+  const ProductTransactionCard(
       {Key? key,
       required this.name,
       required this.category,
       required this.price,
       required this.stock,
       required this.id,
-      required this.onDeleteClick,
-      required this.onUpdateClick, required this.data})
+      required this.onPlusClick,
+      required this.onMinusClick,
+      required this.data, required this.cartCount})
       : super(key: key);
 
   @override
@@ -41,7 +43,7 @@ class ProductCard extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               AutoSizeText(
                 name,
@@ -53,65 +55,59 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              PopupMenuButton(
-                onSelected: (value) async {
+              InkWell(
+                onTap: () {
 
-                  if(value == 1){
-
-                    onUpdateClick.call(data);
-
-                  }else{
-
-                    onDeleteClick.call(data);
-
-                  }
-
+                  onMinusClick.call(data);
                 },
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                itemBuilder: (BuildContext context) => [
-                  const PopupMenuItem(
-                    value: 1,
-                    child: Row(
-                      children: [
-                        Icon(
-                          FontAwesomeIcons.solidPenToSquare,
-                          color: Colors.blue,
-                          size: 14,
-                        ),
-                        SizedBox(
-                          width: 12,
-                        ),
-                        Text('Ubah'),
-                      ],
-                    ),
-                  ),
-                  const PopupMenuItem(
-                    value: 2,
-                    child: Row(
-                      children: [
-                        Icon(
-                          FontAwesomeIcons.trash,
-                          color: Colors.red,
-                          size: 14,
-                        ),
-                        SizedBox(
-                          width: 12,
-                        ),
-                        Text('Hapus'),
-                      ],
-                    ),
-                  ),
-                ],
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Icon(
-                    FontAwesomeIcons.ellipsisVertical,
-                    color: Colors.grey.shade400,
-                    size: 18,
-                  ),
-                ),
-              )
+                child: Container(
+                    decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                            color: const Color(0xFFE0E0E0),
+                            width: 1)),
+                    child: const Padding(
+                      padding: EdgeInsets.all(4.0),
+                      child: Icon(
+                        FontAwesomeIcons.minus,
+                        size: 18,
+                        color: primaryColor,
+                      ),
+                    )),
+              ),
+              const SizedBox(
+                width: 4,
+              ),
+              Padding(
+                padding:
+                const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(
+                    "$cartCount"),
+              ),
+              const SizedBox(
+                width: 4,
+              ),
+              InkWell(
+                onTap: () {
+                  onPlusClick.call(data);
+                },
+                child: Container(
+                    decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                            color: const Color(0xFFE0E0E0),
+                            width: 1)),
+                    child: const Padding(
+                      padding: EdgeInsets.all(4.0),
+                      child: Icon(
+                        FontAwesomeIcons.plus,
+                        size: 18,
+                        color: primaryColor,
+                      ),
+                    )),
+              ),
             ],
           ),
           const SizedBox(height: 20),
