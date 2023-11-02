@@ -60,7 +60,7 @@ class LoginPage extends GetView<LoginController> {
                                 controller.passwordCon.text)
                             .then((value) {
                           if (value) {
-                            Get.off(MainContainerPage());
+                            Get.off(()=>MainContainerPage());
                           } else {
                             Get.snackbar("Login Failed",
                                 "Make sure password and email are correct",

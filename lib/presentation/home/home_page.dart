@@ -424,7 +424,8 @@ class _HomePageState extends State<HomePage> {
               shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
-                  return TransactionCard();
+                  // return TransactionCard();
+                  return Container();
                 },
                 separatorBuilder: (context, index) => SizedBox(
                       height: 12,

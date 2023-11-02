@@ -1,21 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:intl/intl.dart';
 import 'package:point_of_sales/constant/constant.dart';
 import 'package:point_of_sales/presentation/checkout/checkout_page.dart';
 import 'package:point_of_sales/presentation/order/dialog/cart_dialog.dart';
 import 'package:point_of_sales/presentation/order/order_controller.dart';
-import 'package:point_of_sales/presentation/payment/payment_page.dart';
-import 'package:point_of_sales/presentation/product/dialog/input_product_dialog.dart';
-import 'package:point_of_sales/widget/card/product_card.dart';
 import 'package:point_of_sales/widget/card/product_transaction_card.dart';
 import 'package:point_of_sales/widget/default_app_bar.dart';
 import 'package:badges/badges.dart' as badges;
 
-import '../../widget/card/transaction_card.dart';
 import '../../widget/text_input_widget.dart';
 import '../product/product_controller.dart';
 
@@ -243,7 +237,8 @@ class OrderPage extends StatelessWidget {
                                 confirmTextColor: Colors.white,
                                 textConfirm: "Konfirmasi",
                                 onConfirm: () {
-                                  Get.off(CheckoutPage());
+                                  Get.off(CheckoutPage(priceToPay: controller.countTotalPrice(
+                                      productController.allProductList),));
                                 },
                               );
                             }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:point_of_sales/constant/constant.dart';
+import 'package:point_of_sales/presentation/history/history_page.dart';
 import 'package:point_of_sales/presentation/home/home_page.dart';
 import 'package:point_of_sales/presentation/login/login_page.dart';
 import 'package:point_of_sales/presentation/main/main_controller.dart';
@@ -19,7 +20,7 @@ class MainContainerPage extends GetView<MainController> {
     final List<Widget> viewContainer = [
       HomePage(),
       ProductPage(),
-      HomePage(),
+      HistoryPage(),
       LoginPage(),
     ];
 

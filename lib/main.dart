@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:point_of_sales/constant/constant.dart';
+import 'package:point_of_sales/presentation/history/history_controller.dart';
 import 'package:point_of_sales/presentation/login/login_controller.dart';
 import 'package:point_of_sales/presentation/login/login_page.dart';
 import 'package:point_of_sales/presentation/main/main_controller.dart';
@@ -21,6 +22,7 @@ void main() async {
   Get.lazyPut(()=>LoginController());
   Get.lazyPut(()=>MainController());
   Get.put(ProductController());
+  Get.put(HistoryController());
 
   runApp(GetMaterialApp(
       theme: ThemeData(

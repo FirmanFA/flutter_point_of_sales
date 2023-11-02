@@ -178,49 +178,55 @@ class ProductPage extends GetView<ProductController> {
                 ),
 
                 Expanded(
-                  child: ListView.separated(
-                      physics: BouncingScrollPhysics(),
-                      padding: EdgeInsets.only(bottom: 32),
-                      itemBuilder: (context, index) {
-                        final productDetail = controller.filteredProductList[index];
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      controller.onInit();
+                      controller.refreshProducts();
+                    },
+                    child: ListView.separated(
+                        physics: AlwaysScrollableScrollPhysics(),
+                        padding: EdgeInsets.only(bottom: 32),
+                        itemBuilder: (context, index) {
+                          final productDetail = controller.filteredProductList[index];
 
-                        return ProductCard(
-                          name: productDetail.get("product_name"),
-                          stock: productDetail.get("product_stock").toString(),
-                          price: NumberFormat.simpleCurrency(
-                                  locale: "id", name: "Rp. ", decimalDigits: 0)
-                              .format(productDetail.get("product_price")),
-                          category: productDetail.get("product_category"),
-                          id: productDetail.id,
-                          data: productDetail,
-                          onDeleteClick: (data) {
-                            controller.deleteProduct(data);
-                          },
-                          onUpdateClick: (data) {
-                            controller.nameCon.text = data.get("product_name");
-                            controller.priceCon.text =
-                                data.get("product_price").toString();
-                            controller.stockCon.text =
-                                data.get("product_stock").toString();
+                          return ProductCard(
+                            name: productDetail.get("product_name"),
+                            stock: productDetail.get("product_stock").toString(),
+                            price: NumberFormat.simpleCurrency(
+                                    locale: "id", name: "Rp. ", decimalDigits: 0)
+                                .format(productDetail.get("product_price")),
+                            category: productDetail.get("product_category"),
+                            id: productDetail.id,
+                            data: productDetail,
+                            onDeleteClick: (data) {
+                              controller.deleteProduct(data);
+                            },
+                            onUpdateClick: (data) {
+                              controller.nameCon.text = data.get("product_name");
+                              controller.priceCon.text =
+                                  data.get("product_price").toString();
+                              controller.stockCon.text =
+                                  data.get("product_stock").toString();
 
-                            controller.setSelectedInputCategory(controller
-                                .rawProductCategoryList
-                                .indexOf(controller.rawProductCategoryList
-                                    .firstWhere((element) =>
-                                        element.get("category") ==
-                                        data.get("product_category"))));
+                              controller.setSelectedInputCategory(controller
+                                  .rawProductCategoryList
+                                  .indexOf(controller.rawProductCategoryList
+                                      .firstWhere((element) =>
+                                          element.get("category") ==
+                                          data.get("product_category"))));
 
-                            inputProductDialog(
-                                controller: controller,
-                                isEdit: true,
-                                id: data.id);
-                          },
-                        );
-                      },
-                      separatorBuilder: (context, index) => SizedBox(
-                            height: 12,
-                          ),
-                      itemCount: controller.productCount.value),
+                              inputProductDialog(
+                                  controller: controller,
+                                  isEdit: true,
+                                  id: data.id);
+                            },
+                          );
+                        },
+                        separatorBuilder: (context, index) => SizedBox(
+                              height: 12,
+                            ),
+                        itemCount: controller.productCount.value),
+                  ),
                 ),
               ],
             ),
