@@ -2,28 +2,33 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:point_of_sales/constant/constant.dart';
 import 'package:point_of_sales/widget/card/transaction_card.dart';
 import 'package:point_of_sales/widget/default_app_bar.dart';
 
-class HomePage extends StatefulWidget {
+import 'home_controller.dart';
+
+class HomePage extends StatelessWidget {
+
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  List<Color> gradientColors = [
-    Colors.green,
-    Colors.yellow,
-  ];
-
-  bool showAvg = false;
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
+
+
+
+    List<Color> gradientColors = [
+      Colors.green,
+      Colors.yellow,
+    ];
+
+    final controller = Get.put(HomeController());
+
+    controller.getThisMonthTransactions();
+
+    return Obx(() => Scaffold(
       appBar: defaultAppBar("Dashboard"),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -64,7 +69,7 @@ class _HomePageState extends State<HomePage> {
                         bottom: 4,
                       ),
                       child: LineChart(
-                        mainData(),
+                        mainData(gradientColors),
                       ),
                     ),
                   ),
@@ -192,7 +197,9 @@ class _HomePageState extends State<HomePage> {
                             height: 18,
                           ),
                           AutoSizeText(
-                            'Rp. 10.000',
+                            NumberFormat.simpleCurrency(
+                                locale: "id", name: "Rp. ", decimalDigits: 0)
+                                .format(controller.incomeTotal.value),
                             maxLines: 1,
                             style: TextStyle(
                               color: Colors.white,
@@ -243,7 +250,7 @@ class _HomePageState extends State<HomePage> {
                             height: 18,
                           ),
                           AutoSizeText(
-                            '40',
+                            controller.transactionCount.string,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -301,7 +308,7 @@ class _HomePageState extends State<HomePage> {
                             height: 18,
                           ),
                           AutoSizeText(
-                            '40',
+                            controller.productSold.string,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -391,7 +398,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         side: BorderSide(color: Color(0xFF2A3256)),
                         padding:
-                            EdgeInsets.symmetric(vertical: 4, horizontal: 8)),
+                        EdgeInsets.symmetric(vertical: 4, horizontal: 8)),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -421,15 +428,15 @@ class _HomePageState extends State<HomePage> {
               height: 12,
             ),
             ListView.separated(
-              shrinkWrap: true,
+                shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   // return TransactionCard();
                   return Container();
                 },
                 separatorBuilder: (context, index) => SizedBox(
-                      height: 12,
-                    ),
+                  height: 12,
+                ),
                 itemCount: 5),
             SizedBox(
               height: 32,
@@ -437,7 +444,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-    );
+    ));
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
@@ -472,7 +479,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  LineChartData mainData() {
+  LineChartData mainData(List<Color> gradientColors) {
     return LineChartData(
       gridData: FlGridData(
         show: true,

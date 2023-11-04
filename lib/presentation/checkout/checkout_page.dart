@@ -145,6 +145,7 @@ class CheckoutPage extends StatelessWidget {
 
                           controller.savePendingTransaction(
                               name: controller.nameCon.text,
+                              priceToPay: priceToPay,
                               orderedProduct: orderedProductData,).then((value){
 
                             Get.until((route) => route.isFirst);

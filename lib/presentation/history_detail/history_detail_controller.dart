@@ -8,7 +8,13 @@ class HistoryDetailController extends GetxController {
   // DocumentSnapshot? detailOrderData;
   var detailOrderData = Rxn<DocumentSnapshot>();
 
+  var selectedEditStatus = "".obs;
+
   final nameCon = TextEditingController();
+
+  final paidAmountCon = TextEditingController();
+
+  var change = 0.obs;
 
   var tempEditProduct = RxMap();
 
@@ -19,7 +25,6 @@ class HistoryDetailController extends GetxController {
   getOrderDetail(String orderId) async {
     isLoading.value = true;
 
-
     detailOrderData.value =
         await fDb.collection("/transactions").doc(orderId).get();
 
@@ -27,6 +32,7 @@ class HistoryDetailController extends GetxController {
 
     nameCon.text = detailOrderData.value?.get("name");
 
+    selectedEditStatus.value = detailOrderData.value?.get("status");
 
     isLoading.value = false;
   }
@@ -67,7 +73,8 @@ class HistoryDetailController extends GetxController {
       //TODO - add old quantity and new quantity, use its value for update increment
 
       final valueToIncreaseOrDecrease =
-          detailOrderData.value?.get('products')[key]['quantity'] - value['quantity'];
+          detailOrderData.value?.get('products')[key]['quantity'] -
+              value['quantity'];
 
       await fDb.collection("products").doc(key).update(
           {'product_stock': FieldValue.increment(valueToIncreaseOrDecrease)});
@@ -94,9 +101,64 @@ class HistoryDetailController extends GetxController {
     });
   }
 
-  deleteOrder(String orderId, Function() onSuccess) {
-    fDb.collection("/transactions").doc(orderId).delete().then((value) {
+  updateTransactionStatus(String orderId, Function() onSuccess) {
+    //TODO - detect if stock should increase or decrease based on old status and new status
+
+    bool shouldStockIncrease = false;
+    bool shouldUpdateStock = false;
+
+    if (detailOrderData.value?.get("status") == "cancel") {
+      if (selectedEditStatus.value != "cancel") {
+        //TODO - stock is decreasing
+        shouldStockIncrease = false;
+        shouldUpdateStock = true;
+      } else {
+        shouldUpdateStock = false;
+      }
+    } else {
+      if (selectedEditStatus.value == "cancel") {
+        //TODO - stock is increasing
+        shouldUpdateStock = true;
+        shouldStockIncrease = true;
+      } else {
+        shouldUpdateStock = false;
+      }
+    }
+
+    if (shouldUpdateStock) {
+      tempEditProduct.forEach((key, value) async {
+        await fDb.collection("products").doc(key).update({
+          'product_stock': FieldValue.increment(
+              value['quantity'] * (shouldStockIncrease ? 1 : -1))
+        });
+      });
+    }
+
+    fDb.collection('/transactions').doc(orderId).update({
+      'status': selectedEditStatus.value,
+    }).then((value) {
       onSuccess.call();
     });
+  }
+
+  deleteOrder(String orderId, Function() onSuccess) async {
+
+
+    //TODO - if status is not cancel, restore pruduct stock
+
+    if (detailOrderData.value?.get("status") != "cancel") {
+      tempEditProduct.forEach((key, value) async {
+        await fDb.collection("products").doc(key).update(
+            {'product_stock': FieldValue.increment(value['quantity'])});
+      });
+    }
+
+    await fDb.collection("/transactions").doc(orderId).delete().then((value) {
+      onSuccess.call();
+    });
+  }
+
+  setSelectedEditStatus(String status) {
+    selectedEditStatus.value = status;
   }
 }

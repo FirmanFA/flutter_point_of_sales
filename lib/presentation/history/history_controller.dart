@@ -56,33 +56,86 @@ class HistoryController extends GetxController
     selectedMonth.value = month;
   }
 
-  getTransaction() {
-    allTransactionList.bindStream(fDb
+  getTransaction() async {
+    // allTransactionList.bindStream(fDb
+    //     .collection('transactions')
+    //     .orderBy("timestamp", descending: true)
+    //     .snapshots()
+    //     .map((QuerySnapshot query) {
+    //   List<QueryDocumentSnapshot> transactions = [];
+    //   final tempListOfYear = <String>{"semua"};
+    //   listOfYear.clear();
+    //   for (QueryDocumentSnapshot transaction in query.docs) {
+    //     transactions.add(transaction);
+    //     final date = (transaction.get("timestamp") as Timestamp).toDate();
+    //     tempListOfYear.add(date.year.toString());
+    //   }
+    //
+    //   listOfYear.addAll(tempListOfYear.toList());
+    //
+    //   // listOfYear.sort();
+    //
+    //   debugPrint("data tahun $listOfYear");
+    //
+    //   // allTransactionList.value = transactions;
+    //
+    //   transactionCount.value = transactions.length;
+    //
+    //   return transactions;
+    // }));
+    final query = await fDb
         .collection('transactions')
-        .orderBy("timestamp", descending: true)
-        .snapshots()
-        .map((QuerySnapshot query) {
-      List<QueryDocumentSnapshot> transactions = [];
-      final tempListOfYear = <String>{"semua"};
-      listOfYear.clear();
-      for (QueryDocumentSnapshot transaction in query.docs) {
-        transactions.add(transaction);
-        final date = (transaction.get("timestamp") as Timestamp).toDate();
-        tempListOfYear.add(date.year.toString());
-      }
+        .orderBy("timestamp", descending: true).get();
 
-      listOfYear.addAll(tempListOfYear.toList());
+    List<QueryDocumentSnapshot> transactions = [];
+    final tempListOfYear = <String>{"semua"};
+    listOfYear.clear();
+    for (QueryDocumentSnapshot transaction in query.docs) {
+      transactions.add(transaction);
+      final date = (transaction.get("timestamp") as Timestamp).toDate();
+      tempListOfYear.add(date.year.toString());
+    }
 
-      // listOfYear.sort();
+    listOfYear.addAll(tempListOfYear.toList());
 
-      debugPrint("data tahun $listOfYear");
+    // listOfYear.sort();
 
-      // allTransactionList.value = transactions;
+    debugPrint("data tahun $listOfYear");
 
-      transactionCount.value = transactions.length;
+    // allTransactionList.value = transactions;
 
-      return transactions;
-    }));
+    transactionCount.value = transactions.length;
+
+    allTransactionList.value = transactions;
+  }
+
+  refreshList() async {
+    final query = await fDb
+        .collection('transactions')
+        .orderBy("timestamp", descending: true).get();
+
+    List<QueryDocumentSnapshot> transactions = [];
+    final tempListOfYear = <String>{"semua"};
+    listOfYear.clear();
+    for (QueryDocumentSnapshot transaction in query.docs) {
+      transactions.add(transaction);
+      final date = (transaction.get("timestamp") as Timestamp).toDate();
+      tempListOfYear.add(date.year.toString());
+    }
+
+    listOfYear.addAll(tempListOfYear.toList());
+
+    // listOfYear.sort();
+
+    debugPrint("data tahun $listOfYear");
+
+    // allTransactionList.value = transactions;
+
+    transactionCount.value = transactions.length;
+
+    allTransactionList.value = transactions;
+
+    applyFilter();
   }
 
   applyFilter() {

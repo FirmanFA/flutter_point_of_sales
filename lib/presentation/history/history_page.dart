@@ -392,83 +392,89 @@ class HistoryPage extends GetView<HistoryController> {
                 ),
               ),
               Expanded(
-                child: GroupedListView(
-                  elements: controller.filteredTransactionList,
-                  physics: BouncingScrollPhysics(),
-                  padding: EdgeInsets.only(bottom: 42,right: 12, top: 12, left: 12),
-                  groupBy: (QueryDocumentSnapshot<Object?> element) {
-                    return DateFormat("dd-MM-yyyy").parse(
-                        DateFormat("dd-MM-yyyy")
-                            .format(element.get("timestamp").toDate()));
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    controller.getTransaction();
+                    controller.applyFilter();
                   },
-                  groupSeparatorBuilder: (value) {
-                    num transactionAmountByDate = 0;
+                  child: GroupedListView(
+                    elements: controller.filteredTransactionList,
+                    physics: AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.only(bottom: 42,right: 12, top: 12, left: 12),
+                    groupBy: (QueryDocumentSnapshot<Object?> element) {
+                      return DateFormat("dd-MM-yyyy").parse(
+                          DateFormat("dd-MM-yyyy")
+                              .format(element.get("timestamp").toDate()));
+                    },
+                    groupSeparatorBuilder: (value) {
+                      num transactionAmountByDate = 0;
 
-                    for (QueryDocumentSnapshot element
-                        in controller.filteredTransactionList) {
-                      if (element.get("status") == "paid") {
-                        if ((element.get("timestamp") as Timestamp)
-                            .toDate()
-                            .isSameDate(value)) {
-                          transactionAmountByDate = transactionAmountByDate +
-                              element.get("total_amount");
+                      for (QueryDocumentSnapshot element
+                          in controller.filteredTransactionList) {
+                        if (element.get("status") == "paid") {
+                          if ((element.get("timestamp") as Timestamp)
+                              .toDate()
+                              .isSameDate(value)) {
+                            transactionAmountByDate = transactionAmountByDate +
+                                element.get("total_amount");
+                          }
                         }
                       }
-                    }
 
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Center(
-                          child: Row(
-                        children: [
-                          Stack(
-                            // mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                DateFormat("dd MMM yyyy").format(value),
-                                style: TextStyle(
-                                  color: primaryColor,
-                                ),
-                              ),
-                              Positioned(
-                                top: 2,
-                                child: Text(
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Center(
+                            child: Row(
+                          children: [
+                            Stack(
+                              // mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
                                   DateFormat("dd MMM yyyy").format(value),
                                   style: TextStyle(
-                                      color: Colors.transparent,
-                                      decoration: TextDecoration.underline,
-                                      decorationThickness: 4,
-                                      decorationColor: primaryColor),
+                                    color: primaryColor,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          Spacer(),
-                          Text(
-                            NumberFormat.simpleCurrency(
-                                    locale: "id",
-                                    name: "Rp. ",
-                                    decimalDigits: 0)
-                                .format(transactionAmountByDate),
-                            style: TextStyle(
-                              color: primaryColor,
+                                Positioned(
+                                  top: 2,
+                                  child: Text(
+                                    DateFormat("dd MMM yyyy").format(value),
+                                    style: TextStyle(
+                                        color: Colors.transparent,
+                                        decoration: TextDecoration.underline,
+                                        decorationThickness: 4,
+                                        decorationColor: primaryColor),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      )),
-                    );
-                  },
-                  groupComparator: (value1, value2) {
-                    return value1.isBefore(value2) ? 1 : -1;
-                  },
-                  itemBuilder: (context, element) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: TransactionCard(
-                        orderData: element,
-                      ),
-                    );
-                  },
+                            Spacer(),
+                            Text(
+                              NumberFormat.simpleCurrency(
+                                      locale: "id",
+                                      name: "Rp. ",
+                                      decimalDigits: 0)
+                                  .format(transactionAmountByDate),
+                              style: TextStyle(
+                                color: primaryColor,
+                              ),
+                            ),
+                          ],
+                        )),
+                      );
+                    },
+                    groupComparator: (value1, value2) {
+                      return value1.isBefore(value2) ? 1 : -1;
+                    },
+                    itemBuilder: (context, element) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: TransactionCard(
+                          orderData: element,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ],

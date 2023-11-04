@@ -9,6 +9,7 @@ class CheckoutController extends GetxController {
   Future savePendingTransaction({
     required String name,
     required Map orderedProduct,
+    required int priceToPay
   }) async {
     await fDb
         .collection("transactions")
@@ -28,7 +29,7 @@ class CheckoutController extends GetxController {
         'products': orderedProduct,
         'status': "pending",
         'timestamp': Timestamp.now(),
-        'total_amount': 0
+        'total_amount': priceToPay
       }).then((value) {
         orderedProduct.forEach((key, value) {
           debugPrint("map data $key $value");
