@@ -5,20 +5,17 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:point_of_sales/constant/constant.dart';
+import 'package:point_of_sales/presentation/main/main_controller.dart';
 import 'package:point_of_sales/widget/card/transaction_card.dart';
 import 'package:point_of_sales/widget/default_app_bar.dart';
 
 import 'home_controller.dart';
 
 class HomePage extends StatelessWidget {
-
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-
-
-
     List<Color> gradientColors = [
       Colors.green,
       Colors.yellow,
@@ -26,274 +23,89 @@ class HomePage extends StatelessWidget {
 
     final controller = Get.put(HomeController());
 
+    final MainController mainController = Get.find();
+
     controller.getThisMonthTransactions();
+    controller.getLatest5TransactionData();
+    controller.getSmallestStockProduct();
 
     return Obx(() => Scaffold(
-      appBar: defaultAppBar("Dashboard"),
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        padding: EdgeInsets.all(12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Grafik Jumlah Transaksi Bulan Ini',
-              style: TextStyle(
-                color: Color(0xFF2A3256),
-                fontSize: 16,
-                fontFamily: 'Rubik',
-                fontWeight: FontWeight.w500,
-                height: 0,
-              ),
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            Container(
-              padding: EdgeInsets.all(0),
-              decoration: BoxDecoration(
-                  color: primaryColor, borderRadius: BorderRadius.circular(12)),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AspectRatio(
-                    aspectRatio: 1.70,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        right: 12,
-                        left: 4,
-                        top: 24,
-                        bottom: 4,
-                      ),
-                      child: LineChart(
-                        mainData(gradientColors),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 0,
-                  ),
-                  Row(
+          appBar: defaultAppBar("Dashboard"),
+          backgroundColor: Colors.white,
+          body: controller.isLoading.value
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        width: 22,
-                      ),
-                      Container(
-                        width: 10,
-                        height: 10,
-                        decoration: BoxDecoration(
-                            color: Colors.yellow, shape: BoxShape.circle),
-                      ),
-                      SizedBox(
-                        width: 6,
-                      ),
-                      Text(
-                        'Jumlah transaksi',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      const Text(
+                        'Grafik Jumlah Transaksi Bulan Ini',
                         style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
+                          color: Color(0xFF2A3256),
+                          fontSize: 16,
                           fontFamily: 'Rubik',
-                          fontWeight: FontWeight.w400,
+                          fontWeight: FontWeight.w500,
+                          height: 0,
                         ),
                       ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(
-                        width: 22,
+                      const SizedBox(
+                        height: 12,
                       ),
                       Container(
-                        width: 10,
-                        height: 10,
+                        padding: const EdgeInsets.all(0),
                         decoration: BoxDecoration(
-                            color: Colors.white, shape: BoxShape.circle),
-                      ),
-                      SizedBox(
-                        width: 6,
-                      ),
-                      Text(
-                        'Tanggal',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontFamily: 'Rubik',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 18,
-            ),
-            Text(
-              'Transaksi Bulan Ini',
-              style: TextStyle(
-                color: Color(0xFF2A3256),
-                fontSize: 16,
-                fontFamily: 'Rubik',
-                fontWeight: FontWeight.w500,
-                height: 0,
-              ),
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  flex: 7,
-                  child: Container(
-                      padding: EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                          color: Colors.green,
-                          borderRadius: BorderRadius.circular(12)),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                FontAwesomeIcons.dollarSign,
-                                color: Colors.white,
-                                size: 14,
-                              ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              AutoSizeText(
-                                'Pendapatan',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontFamily: 'Rubik',
-                                  fontWeight: FontWeight.w400,
+                            color: primaryColor,
+                            borderRadius: BorderRadius.circular(12)),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AspectRatio(
+                              aspectRatio: 1.70,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  right: 12,
+                                  left: 4,
+                                  top: 24,
+                                  bottom: 4,
+                                ),
+                                child: LineChart(
+                                  mainData(gradientColors,
+                                      transactionCount: controller
+                                          .maxTransactionCountThisMonth.value,
+                                      formattedTransactionList: controller
+                                          .formattedThisMonthTransaction),
                                 ),
                               ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 18,
-                          ),
-                          AutoSizeText(
-                            NumberFormat.simpleCurrency(
-                                locale: "id", name: "Rp. ", decimalDigits: 0)
-                                .format(controller.incomeTotal.value),
-                            maxLines: 1,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontFamily: 'Rubik',
-                              fontWeight: FontWeight.w500,
                             ),
-                          ),
-                        ],
-                      )),
-                ),
-                SizedBox(
-                  width: 12,
-                ),
-                Expanded(
-                  flex: 4,
-                  child: Container(
-                      padding: EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                          color: Colors.yellow.shade900,
-                          borderRadius: BorderRadius.circular(12)),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                FontAwesomeIcons.fileLines,
-                                color: Colors.white,
-                                size: 14,
-                              ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              AutoSizeText(
-                                'Transaksi',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontFamily: 'Rubik',
-                                  fontWeight: FontWeight.w400,
+                            const SizedBox(
+                              height: 0,
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const SizedBox(
+                                  width: 22,
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 18,
-                          ),
-                          AutoSizeText(
-                            controller.transactionCount.string,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontFamily: 'Rubik',
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      )),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  flex: 5,
-                  child: Container(
-                      padding: EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(12)),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                FontAwesomeIcons.cartFlatbed,
-                                color: Colors.white,
-                                size: 14,
-                              ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Expanded(
-                                child: AutoSizeText(
-                                  'Barang Terjual',
+                                Container(
+                                  width: 10,
+                                  height: 10,
+                                  decoration: const BoxDecoration(
+                                      color: Colors.yellow,
+                                      shape: BoxShape.circle),
+                                ),
+                                const SizedBox(
+                                  width: 6,
+                                ),
+                                const Text(
+                                  'Jumlah transaksi',
                                   maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 12,
@@ -301,150 +113,358 @@ class HomePage extends StatelessWidget {
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 18,
-                          ),
-                          AutoSizeText(
-                            controller.productSold.string,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontFamily: 'Rubik',
-                              fontWeight: FontWeight.w500,
+                              ],
                             ),
-                          ),
-                        ],
-                      )),
-                ),
-                SizedBox(
-                  width: 12,
-                ),
-                Expanded(
-                  flex: 7,
-                  child: Container(
-                      padding: EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                          color: Colors.green,
-                          borderRadius: BorderRadius.circular(12)),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                FontAwesomeIcons.boxArchive,
-                                color: Colors.white,
-                                size: 14,
-                              ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              AutoSizeText(
-                                'Barang Terlaris',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontFamily: 'Rubik',
-                                  fontWeight: FontWeight.w400,
+                            const SizedBox(
+                              height: 12,
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const SizedBox(
+                                  width: 22,
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 18,
-                          ),
-                          AutoSizeText(
-                            'Minyak Goreng Cap Tiga',
-                            maxLines: 1,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontFamily: 'Rubik',
-                              fontWeight: FontWeight.w500,
+                                Container(
+                                  width: 10,
+                                  height: 10,
+                                  decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                      shape: BoxShape.circle),
+                                ),
+                                const SizedBox(
+                                  width: 6,
+                                ),
+                                const Text(
+                                  'Tanggal',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontFamily: 'Rubik',
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
                             ),
+                            const SizedBox(
+                              height: 12,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 18,
+                      ),
+                      const Text(
+                        'Transaksi Bulan Ini',
+                        style: TextStyle(
+                          color: Color(0xFF2A3256),
+                          fontSize: 16,
+                          fontFamily: 'Rubik',
+                          fontWeight: FontWeight.w500,
+                          height: 0,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 12,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 7,
+                            child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                    color: Colors.green,
+                                    borderRadius: BorderRadius.circular(12)),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Row(
+                                      children: [
+                                        Icon(
+                                          FontAwesomeIcons.dollarSign,
+                                          color: Colors.white,
+                                          size: 14,
+                                        ),
+                                        SizedBox(
+                                          width: 8,
+                                        ),
+                                        AutoSizeText(
+                                          'Pendapatan',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontFamily: 'Rubik',
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 18,
+                                    ),
+                                    AutoSizeText(
+                                      NumberFormat.simpleCurrency(
+                                              locale: "id",
+                                              name: "Rp. ",
+                                              decimalDigits: 0)
+                                          .format(controller.incomeTotal.value),
+                                      maxLines: 1,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontFamily: 'Rubik',
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                          ),
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          Expanded(
+                            flex: 4,
+                            child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                    color: Colors.yellow.shade900,
+                                    borderRadius: BorderRadius.circular(12)),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Row(
+                                      children: [
+                                        Icon(
+                                          FontAwesomeIcons.fileLines,
+                                          color: Colors.white,
+                                          size: 14,
+                                        ),
+                                        SizedBox(
+                                          width: 8,
+                                        ),
+                                        AutoSizeText(
+                                          'Transaksi',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontFamily: 'Rubik',
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 18,
+                                    ),
+                                    AutoSizeText(
+                                      controller.transactionCount.string,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontFamily: 'Rubik',
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                )),
                           ),
                         ],
-                      )),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 18,
-            ),
-            Row(
-              children: [
-                Text(
-                  'Transaksi Terakhir',
-                  style: TextStyle(
-                    color: Color(0xFF2A3256),
-                    fontSize: 16,
-                    fontFamily: 'Rubik',
-                    fontWeight: FontWeight.w500,
-                    height: 0,
+                      ),
+                      const SizedBox(
+                        height: 12,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 5,
+                            child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                    color: Colors.blue,
+                                    borderRadius: BorderRadius.circular(12)),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          FontAwesomeIcons.cartFlatbed,
+                                          color: Colors.white,
+                                          size: 14,
+                                        ),
+                                        SizedBox(
+                                          width: 8,
+                                        ),
+                                        Expanded(
+                                          child: AutoSizeText(
+                                            'Barang Terjual',
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                              fontFamily: 'Rubik',
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 18,
+                                    ),
+                                    AutoSizeText(
+                                      controller.productSold.string,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontFamily: 'Rubik',
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                          ),
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          Expanded(
+                            flex: 7,
+                            child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                    color: Colors.redAccent,
+                                    borderRadius: BorderRadius.circular(12)),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Row(
+                                      children: [
+                                        Icon(
+                                          FontAwesomeIcons.boxArchive,
+                                          color: Colors.white,
+                                          size: 14,
+                                        ),
+                                        SizedBox(
+                                          width: 8,
+                                        ),
+                                        AutoSizeText(
+                                          'Stock Menipis',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontFamily: 'Rubik',
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 18,
+                                    ),
+                                    AutoSizeText(
+                                      controller.productWithSmallestStock.value
+                                              ?.get("product_name") ??
+                                          "Belum ada produk",
+                                      maxLines: 1,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontFamily: 'Rubik',
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 18,
+                      ),
+                      Row(
+                        children: [
+                          const Text(
+                            'Transaksi Terakhir',
+                            style: TextStyle(
+                              color: Color(0xFF2A3256),
+                              fontSize: 16,
+                              fontFamily: 'Rubik',
+                              fontWeight: FontWeight.w500,
+                              height: 0,
+                            ),
+                          ),
+                          const Spacer(),
+                          OutlinedButton(
+                              onPressed: () {
+                                mainController.setNav(nav: 2);
+                              },
+                              style: OutlinedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  side: const BorderSide(color: Color(0xFF2A3256)),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 4, horizontal: 8)),
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Lihat Semua',
+                                    style: TextStyle(
+                                      color: Color(0xFF2A3256),
+                                      fontSize: 12,
+                                      fontFamily: 'Rubik',
+                                      fontWeight: FontWeight.w500,
+                                      height: 0,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Icon(
+                                    FontAwesomeIcons.arrowRight,
+                                    size: 14,
+                                    color: Color(0xFF2A3256),
+                                  )
+                                ],
+                              ))
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 12,
+                      ),
+                      ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return TransactionCard(
+                              orderData:
+                                  controller.latest5TransactionData[index],
+                            );
+                          },
+                          separatorBuilder: (context, index) => const SizedBox(
+                                height: 12,
+                              ),
+                          itemCount: controller.latest5TransactionData.length),
+                      const SizedBox(
+                        height: 32,
+                      )
+                    ],
                   ),
                 ),
-                Spacer(),
-                OutlinedButton(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        side: BorderSide(color: Color(0xFF2A3256)),
-                        padding:
-                        EdgeInsets.symmetric(vertical: 4, horizontal: 8)),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Lihat Semua',
-                          style: TextStyle(
-                            color: Color(0xFF2A3256),
-                            fontSize: 12,
-                            fontFamily: 'Rubik',
-                            fontWeight: FontWeight.w500,
-                            height: 0,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Icon(
-                          FontAwesomeIcons.arrowRight,
-                          size: 14,
-                          color: Color(0xFF2A3256),
-                        )
-                      ],
-                    ))
-              ],
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            ListView.separated(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  // return TransactionCard();
-                  return Container();
-                },
-                separatorBuilder: (context, index) => SizedBox(
-                  height: 12,
-                ),
-                itemCount: 5),
-            SizedBox(
-              height: 32,
-            )
-          ],
-        ),
-      ),
-    ));
+        ));
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
@@ -458,7 +478,7 @@ class HomePage extends StatelessWidget {
       text = "${value.toInt()}";
       return Text(text, style: style, textAlign: TextAlign.center);
     } else {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
   }
 
@@ -471,15 +491,13 @@ class HomePage extends StatelessWidget {
     );
     String text;
 
-    if (value.toInt().isEven) {
-      text = "${value.toInt()}";
-      return Text(text, style: style, textAlign: TextAlign.center);
-    } else {
-      return SizedBox.shrink();
-    }
+    text = "${value.toInt()}";
+    return Text(text, style: style, textAlign: TextAlign.center);
   }
 
-  LineChartData mainData(List<Color> gradientColors) {
+  LineChartData mainData(List<Color> gradientColors,
+      {required int transactionCount,
+      required List<FlSpot> formattedTransactionList}) {
     return LineChartData(
       gridData: FlGridData(
         show: true,
@@ -521,26 +539,22 @@ class HomePage extends StatelessWidget {
         show: true,
         border: Border.all(color: Colors.white),
       ),
-      minX: 0,
+      lineTouchData: LineTouchData(touchTooltipData: LineTouchTooltipData(
+        getTooltipItems: (touchedSpots) {
+          return touchedSpots.map((barSpot) {
+            return LineTooltipItem(
+                "Tanggal: ${barSpot.x.toStringAsFixed(0)}, Transaksi: ${barSpot.y.toStringAsFixed(0)}",
+                const TextStyle(color: Colors.white));
+          }).toList();
+        },
+      )),
+      minX: 1,
       maxX: 31,
       minY: 0,
-      maxY: 10,
+      maxY: transactionCount.toDouble(),
       lineBarsData: [
         LineChartBarData(
-          spots: const [
-            FlSpot(0, 3),
-            FlSpot(1, 3),
-            FlSpot(2, 2),
-            FlSpot(3, 2),
-            FlSpot(4, 5),
-            FlSpot(5, 5),
-            FlSpot(6, 3.1),
-            FlSpot(7, 3.1),
-            FlSpot(8, 4),
-            FlSpot(9, 4),
-            FlSpot(10, 3),
-            FlSpot(11, 3),
-          ],
+          spots: formattedTransactionList,
           isCurved: true,
           gradient: LinearGradient(
             colors: gradientColors,
@@ -550,6 +564,7 @@ class HomePage extends StatelessWidget {
           dotData: const FlDotData(
             show: false,
           ),
+          preventCurveOverShooting: true,
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
