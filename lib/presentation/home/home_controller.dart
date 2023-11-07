@@ -24,6 +24,15 @@ class HomeController extends GetxController {
 
   var isLoading = true.obs;
 
+  @override
+  onInit() {
+    super.onInit();
+
+    getLatest5TransactionData();
+    getThisMonthTransactions();
+    getSmallestStockProduct();
+  }
+
   getThisMonthTransactions() async {
     isLoading.value = true;
 
@@ -120,6 +129,11 @@ class HomeController extends GetxController {
   }
 
   getLatest5TransactionData() async {
+
+    isLoading.value = true;
+
+    Future.delayed(Duration(seconds: 1));
+
     final query = await fDb
         .collection('transactions')
         .orderBy("timestamp", descending: true)
@@ -132,6 +146,9 @@ class HomeController extends GetxController {
     }
 
     latest5TransactionData.value = tempLatest5Transactions;
+
+    isLoading.value = false;
+
   }
 
   getSmallestStockProduct() {

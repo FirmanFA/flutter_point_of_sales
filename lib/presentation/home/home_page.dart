@@ -21,13 +21,15 @@ class HomePage extends StatelessWidget {
       Colors.yellow,
     ];
 
-    final controller = Get.put(HomeController());
+    final HomeController controller = Get.find();
 
     final MainController mainController = Get.find();
 
-    controller.getThisMonthTransactions();
-    controller.getLatest5TransactionData();
-    controller.getSmallestStockProduct();
+    controller.onInit();
+
+    // controller.getThisMonthTransactions();
+    // controller.getLatest5TransactionData();
+    // controller.getSmallestStockProduct();
 
     return Obx(() => Scaffold(
           appBar: defaultAppBar("Dashboard"),
@@ -36,278 +38,172 @@ class HomePage extends StatelessWidget {
               ? const Center(
                   child: CircularProgressIndicator(),
                 )
-              : SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Grafik Jumlah Transaksi Bulan Ini',
-                        style: TextStyle(
-                          color: Color(0xFF2A3256),
-                          fontSize: 16,
-                          fontFamily: 'Rubik',
-                          fontWeight: FontWeight.w500,
-                          height: 0,
+              : RefreshIndicator(
+            onRefresh: () async {
+              controller.getSmallestStockProduct();
+              controller.getThisMonthTransactions();
+              controller.getLatest5TransactionData();
+            },
+                child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Grafik Jumlah Transaksi Bulan Ini',
+                          style: TextStyle(
+                            color: Color(0xFF2A3256),
+                            fontSize: 16,
+                            fontFamily: 'Rubik',
+                            fontWeight: FontWeight.w500,
+                            height: 0,
+                          ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 12,
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(0),
-                        decoration: BoxDecoration(
-                            color: primaryColor,
-                            borderRadius: BorderRadius.circular(12)),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AspectRatio(
-                              aspectRatio: 1.70,
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  right: 12,
-                                  left: 4,
-                                  top: 24,
-                                  bottom: 4,
-                                ),
-                                child: LineChart(
-                                  mainData(gradientColors,
-                                      transactionCount: controller
-                                          .maxTransactionCountThisMonth.value,
-                                      formattedTransactionList: controller
-                                          .formattedThisMonthTransaction),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(0),
+                          decoration: BoxDecoration(
+                              color: primaryColor,
+                              borderRadius: BorderRadius.circular(12)),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AspectRatio(
+                                aspectRatio: 1.70,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: 12,
+                                    left: 4,
+                                    top: 24,
+                                    bottom: 4,
+                                  ),
+                                  child: LineChart(
+                                    mainData(gradientColors,
+                                        transactionCount: controller
+                                            .maxTransactionCountThisMonth.value,
+                                        formattedTransactionList: controller
+                                            .formattedThisMonthTransaction),
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(
-                              height: 0,
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const SizedBox(
-                                  width: 22,
-                                ),
-                                Container(
-                                  width: 10,
-                                  height: 10,
-                                  decoration: const BoxDecoration(
-                                      color: Colors.yellow,
-                                      shape: BoxShape.circle),
-                                ),
-                                const SizedBox(
-                                  width: 6,
-                                ),
-                                const Text(
-                                  'Jumlah transaksi',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontFamily: 'Rubik',
-                                    fontWeight: FontWeight.w400,
+                              const SizedBox(
+                                height: 0,
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const SizedBox(
+                                    width: 22,
                                   ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 12,
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const SizedBox(
-                                  width: 22,
-                                ),
-                                Container(
-                                  width: 10,
-                                  height: 10,
-                                  decoration: const BoxDecoration(
+                                  Container(
+                                    width: 10,
+                                    height: 10,
+                                    decoration: const BoxDecoration(
+                                        color: Colors.yellow,
+                                        shape: BoxShape.circle),
+                                  ),
+                                  const SizedBox(
+                                    width: 6,
+                                  ),
+                                  const Text(
+                                    'Jumlah transaksi',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
                                       color: Colors.white,
-                                      shape: BoxShape.circle),
-                                ),
-                                const SizedBox(
-                                  width: 6,
-                                ),
-                                const Text(
-                                  'Tanggal',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontFamily: 'Rubik',
-                                    fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      fontFamily: 'Rubik',
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 12,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 18,
-                      ),
-                      const Text(
-                        'Transaksi Bulan Ini',
-                        style: TextStyle(
-                          color: Color(0xFF2A3256),
-                          fontSize: 16,
-                          fontFamily: 'Rubik',
-                          fontWeight: FontWeight.w500,
-                          height: 0,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 12,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 7,
-                            child: Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                    color: Colors.green,
-                                    borderRadius: BorderRadius.circular(12)),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Row(
-                                      children: [
-                                        Icon(
-                                          FontAwesomeIcons.dollarSign,
-                                          color: Colors.white,
-                                          size: 14,
-                                        ),
-                                        SizedBox(
-                                          width: 8,
-                                        ),
-                                        AutoSizeText(
-                                          'Pendapatan',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12,
-                                            fontFamily: 'Rubik',
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 18,
-                                    ),
-                                    AutoSizeText(
-                                      NumberFormat.simpleCurrency(
-                                              locale: "id",
-                                              name: "Rp. ",
-                                              decimalDigits: 0)
-                                          .format(controller.incomeTotal.value),
-                                      maxLines: 1,
-                                      style: const TextStyle(
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 12,
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const SizedBox(
+                                    width: 22,
+                                  ),
+                                  Container(
+                                    width: 10,
+                                    height: 10,
+                                    decoration: const BoxDecoration(
                                         color: Colors.white,
-                                        fontSize: 18,
-                                        fontFamily: 'Rubik',
-                                        fontWeight: FontWeight.w500,
-                                      ),
+                                        shape: BoxShape.circle),
+                                  ),
+                                  const SizedBox(
+                                    width: 6,
+                                  ),
+                                  const Text(
+                                    'Tanggal',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontFamily: 'Rubik',
+                                      fontWeight: FontWeight.w400,
                                     ),
-                                  ],
-                                )),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 12,
+                              ),
+                            ],
                           ),
-                          const SizedBox(
-                            width: 12,
+                        ),
+                        const SizedBox(
+                          height: 18,
+                        ),
+                        const Text(
+                          'Transaksi Bulan Ini',
+                          style: TextStyle(
+                            color: Color(0xFF2A3256),
+                            fontSize: 16,
+                            fontFamily: 'Rubik',
+                            fontWeight: FontWeight.w500,
+                            height: 0,
                           ),
-                          Expanded(
-                            flex: 4,
-                            child: Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                    color: Colors.yellow.shade900,
-                                    borderRadius: BorderRadius.circular(12)),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Row(
-                                      children: [
-                                        Icon(
-                                          FontAwesomeIcons.fileLines,
-                                          color: Colors.white,
-                                          size: 14,
-                                        ),
-                                        SizedBox(
-                                          width: 8,
-                                        ),
-                                        AutoSizeText(
-                                          'Transaksi',
-                                          style: TextStyle(
+                        ),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 7,
+                              child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                      color: Colors.green,
+                                      borderRadius: BorderRadius.circular(12)),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Row(
+                                        children: [
+                                          Icon(
+                                            FontAwesomeIcons.dollarSign,
                                             color: Colors.white,
-                                            fontSize: 12,
-                                            fontFamily: 'Rubik',
-                                            fontWeight: FontWeight.w400,
+                                            size: 14,
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 18,
-                                    ),
-                                    AutoSizeText(
-                                      controller.transactionCount.string,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontFamily: 'Rubik',
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                )),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 12,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 5,
-                            child: Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                    color: Colors.blue,
-                                    borderRadius: BorderRadius.circular(12)),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          FontAwesomeIcons.cartFlatbed,
-                                          color: Colors.white,
-                                          size: 14,
-                                        ),
-                                        SizedBox(
-                                          width: 8,
-                                        ),
-                                        Expanded(
-                                          child: AutoSizeText(
-                                            'Barang Terjual',
+                                          SizedBox(
+                                            width: 8,
+                                          ),
+                                          AutoSizeText(
+                                            'Pendapatan',
                                             maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 12,
@@ -315,155 +211,268 @@ class HomePage extends StatelessWidget {
                                               fontWeight: FontWeight.w400,
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 18,
-                                    ),
-                                    AutoSizeText(
-                                      controller.productSold.string,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontFamily: 'Rubik',
-                                        fontWeight: FontWeight.w500,
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                )),
-                          ),
-                          const SizedBox(
-                            width: 12,
-                          ),
-                          Expanded(
-                            flex: 7,
-                            child: Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                    color: Colors.redAccent,
-                                    borderRadius: BorderRadius.circular(12)),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Row(
-                                      children: [
-                                        Icon(
-                                          FontAwesomeIcons.boxArchive,
+                                      const SizedBox(
+                                        height: 18,
+                                      ),
+                                      AutoSizeText(
+                                        NumberFormat.simpleCurrency(
+                                                locale: "id",
+                                                name: "Rp. ",
+                                                decimalDigits: 0)
+                                            .format(controller.incomeTotal.value),
+                                        maxLines: 1,
+                                        style: const TextStyle(
                                           color: Colors.white,
-                                          size: 14,
+                                          fontSize: 18,
+                                          fontFamily: 'Rubik',
+                                          fontWeight: FontWeight.w500,
                                         ),
-                                        SizedBox(
-                                          width: 8,
-                                        ),
-                                        AutoSizeText(
-                                          'Stock Menipis',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
+                                      ),
+                                    ],
+                                  )),
+                            ),
+                            const SizedBox(
+                              width: 12,
+                            ),
+                            Expanded(
+                              flex: 4,
+                              child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                      color: Colors.yellow.shade900,
+                                      borderRadius: BorderRadius.circular(12)),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Row(
+                                        children: [
+                                          Icon(
+                                            FontAwesomeIcons.fileLines,
                                             color: Colors.white,
-                                            fontSize: 12,
-                                            fontFamily: 'Rubik',
-                                            fontWeight: FontWeight.w400,
+                                            size: 14,
                                           ),
+                                          SizedBox(
+                                            width: 8,
+                                          ),
+                                          AutoSizeText(
+                                            'Transaksi',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                              fontFamily: 'Rubik',
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 18,
+                                      ),
+                                      AutoSizeText(
+                                        controller.transactionCount.string,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontFamily: 'Rubik',
+                                          fontWeight: FontWeight.w500,
                                         ),
-                                      ],
+                                      ),
+                                    ],
+                                  )),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 5,
+                              child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                      color: Colors.blue,
+                                      borderRadius: BorderRadius.circular(12)),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            FontAwesomeIcons.cartFlatbed,
+                                            color: Colors.white,
+                                            size: 14,
+                                          ),
+                                          SizedBox(
+                                            width: 8,
+                                          ),
+                                          Expanded(
+                                            child: AutoSizeText(
+                                              'Barang Terjual',
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12,
+                                                fontFamily: 'Rubik',
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 18,
+                                      ),
+                                      AutoSizeText(
+                                        controller.productSold.string,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontFamily: 'Rubik',
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  )),
+                            ),
+                            const SizedBox(
+                              width: 12,
+                            ),
+                            Expanded(
+                              flex: 7,
+                              child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                      color: Colors.redAccent,
+                                      borderRadius: BorderRadius.circular(12)),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Row(
+                                        children: [
+                                          Icon(
+                                            FontAwesomeIcons.boxArchive,
+                                            color: Colors.white,
+                                            size: 14,
+                                          ),
+                                          SizedBox(
+                                            width: 8,
+                                          ),
+                                          AutoSizeText(
+                                            'Stock Menipis',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                              fontFamily: 'Rubik',
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 18,
+                                      ),
+                                      AutoSizeText(
+                                        controller.productWithSmallestStock.value
+                                                ?.get("product_name") ??
+                                            "Belum ada produk",
+                                        maxLines: 1,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontFamily: 'Rubik',
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  )),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 18,
+                        ),
+                        Row(
+                          children: [
+                            const Text(
+                              'Transaksi Terakhir',
+                              style: TextStyle(
+                                color: Color(0xFF2A3256),
+                                fontSize: 16,
+                                fontFamily: 'Rubik',
+                                fontWeight: FontWeight.w500,
+                                height: 0,
+                              ),
+                            ),
+                            const Spacer(),
+                            OutlinedButton(
+                                onPressed: () {
+                                  mainController.setNav(nav: 2);
+                                },
+                                style: OutlinedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
                                     ),
-                                    const SizedBox(
-                                      height: 18,
-                                    ),
-                                    AutoSizeText(
-                                      controller.productWithSmallestStock.value
-                                              ?.get("product_name") ??
-                                          "Belum ada produk",
-                                      maxLines: 1,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
+                                    side: const BorderSide(color: Color(0xFF2A3256)),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 4, horizontal: 8)),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Lihat Semua',
+                                      style: TextStyle(
+                                        color: Color(0xFF2A3256),
+                                        fontSize: 12,
                                         fontFamily: 'Rubik',
                                         fontWeight: FontWeight.w500,
+                                        height: 0,
                                       ),
                                     ),
-                                  ],
-                                )),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 18,
-                      ),
-                      Row(
-                        children: [
-                          const Text(
-                            'Transaksi Terakhir',
-                            style: TextStyle(
-                              color: Color(0xFF2A3256),
-                              fontSize: 16,
-                              fontFamily: 'Rubik',
-                              fontWeight: FontWeight.w500,
-                              height: 0,
-                            ),
-                          ),
-                          const Spacer(),
-                          OutlinedButton(
-                              onPressed: () {
-                                mainController.setNav(nav: 2);
-                              },
-                              style: OutlinedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  side: const BorderSide(color: Color(0xFF2A3256)),
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 4, horizontal: 8)),
-                              child: const Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'Lihat Semua',
-                                    style: TextStyle(
-                                      color: Color(0xFF2A3256),
-                                      fontSize: 12,
-                                      fontFamily: 'Rubik',
-                                      fontWeight: FontWeight.w500,
-                                      height: 0,
+                                    SizedBox(
+                                      width: 8,
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 8,
-                                  ),
-                                  Icon(
-                                    FontAwesomeIcons.arrowRight,
-                                    size: 14,
-                                    color: Color(0xFF2A3256),
-                                  )
-                                ],
-                              ))
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 12,
-                      ),
-                      ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return TransactionCard(
-                              orderData:
-                                  controller.latest5TransactionData[index],
-                            );
-                          },
-                          separatorBuilder: (context, index) => const SizedBox(
-                                height: 12,
-                              ),
-                          itemCount: controller.latest5TransactionData.length),
-                      const SizedBox(
-                        height: 32,
-                      )
-                    ],
+                                    Icon(
+                                      FontAwesomeIcons.arrowRight,
+                                      size: 14,
+                                      color: Color(0xFF2A3256),
+                                    )
+                                  ],
+                                ))
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return TransactionCard(
+                                orderData:
+                                    controller.latest5TransactionData[index],
+                              );
+                            },
+                            separatorBuilder: (context, index) => const SizedBox(
+                                  height: 12,
+                                ),
+                            itemCount: controller.latest5TransactionData.length),
+                        const SizedBox(
+                          height: 32,
+                        )
+                      ],
+                    ),
                   ),
-                ),
+              ),
         ));
   }
 

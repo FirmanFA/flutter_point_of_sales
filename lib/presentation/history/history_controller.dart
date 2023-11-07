@@ -5,10 +5,12 @@ import 'package:get/get.dart';
 import '../../constant/constant.dart';
 
 class HistoryController extends GetxController
-    with GetTickerProviderStateMixin {
+    with GetTickerProviderStateMixin, StateMixin<List<QueryDocumentSnapshot>> {
   RxList<QueryDocumentSnapshot> filteredTransactionList = RxList([]);
   RxList<QueryDocumentSnapshot> allTransactionList = RxList([]);
   var transactionCount = 0.obs;
+
+  var isLoading = false.obs;
 
   RxList<String> listOfYear = RxList([]);
   RxList<String> listOfMonths = RxList([
@@ -41,7 +43,6 @@ class HistoryController extends GetxController
     tabController = TabController(length: 4, vsync: this);
 
     getTransaction();
-    applyFilter();
   }
 
   setSelectedStatus(int status) {
@@ -57,32 +58,11 @@ class HistoryController extends GetxController
   }
 
   getTransaction() async {
-    // allTransactionList.bindStream(fDb
-    //     .collection('transactions')
-    //     .orderBy("timestamp", descending: true)
-    //     .snapshots()
-    //     .map((QuerySnapshot query) {
-    //   List<QueryDocumentSnapshot> transactions = [];
-    //   final tempListOfYear = <String>{"semua"};
-    //   listOfYear.clear();
-    //   for (QueryDocumentSnapshot transaction in query.docs) {
-    //     transactions.add(transaction);
-    //     final date = (transaction.get("timestamp") as Timestamp).toDate();
-    //     tempListOfYear.add(date.year.toString());
-    //   }
-    //
-    //   listOfYear.addAll(tempListOfYear.toList());
-    //
-    //   // listOfYear.sort();
-    //
-    //   debugPrint("data tahun $listOfYear");
-    //
-    //   // allTransactionList.value = transactions;
-    //
-    //   transactionCount.value = transactions.length;
-    //
-    //   return transactions;
-    // }));
+
+    isLoading.value = true;
+
+    Future.delayed(Duration(seconds: 1));
+
     final query = await fDb
         .collection('transactions')
         .orderBy("timestamp", descending: true).get();
@@ -107,9 +87,19 @@ class HistoryController extends GetxController
     transactionCount.value = transactions.length;
 
     allTransactionList.value = transactions;
+
+    applyFilter();
+
+    isLoading.value = false;
+
+
+
   }
 
   refreshList() async {
+    
+    change(null, status: RxStatus.loading());
+    
     final query = await fDb
         .collection('transactions')
         .orderBy("timestamp", descending: true).get();
@@ -194,5 +184,8 @@ class HistoryController extends GetxController
       return returnStatus && returnYear && returnMonth;
 
     }).toList();
+
+    change(filteredTransactionList, status: RxStatus.success());
+    
   }
 }
