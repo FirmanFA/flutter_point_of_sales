@@ -16,6 +16,16 @@ class TransactionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final time = orderData.get("timestamp") as Timestamp;
 
+    final productData = orderData.get("products") as Map;
+
+    int productTotalQuantity = 0;
+
+    productData.forEach((key, value) {
+      final currentQuantity = value['quantity'] as int;
+
+      productTotalQuantity += currentQuantity;
+    });
+
     return AnimatedCardContainer(
       onTap: () {
         Get.to(() => HistoryDetailPage(
@@ -81,7 +91,8 @@ class TransactionCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     Text(
-                      orderData.get("products").keys.length.toString(),
+                      // orderData.get("products").keys.length.toString(),
+                      productTotalQuantity.toString(),
                       style: TextStyle(
                         color: Color(0xFF121212),
                         fontSize: 12,

@@ -136,6 +136,8 @@ class HistoryDetailController extends GetxController {
 
     fDb.collection('/transactions').doc(orderId).update({
       'status': selectedEditStatus.value,
+    }).catchError((err){
+      debugPrint("something when wrong $err");
     }).then((value) {
       onSuccess.call();
     });

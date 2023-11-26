@@ -37,6 +37,14 @@ class PaymentController extends GetxController {
         'timestamp': Timestamp.now(),
         'total_amount': totalAmount
       }).then((value) {
+
+        orderedProduct.forEach((key, value) async {
+          debugPrint("map data $key $value");
+          await fDb.collection("products").doc(key).update(
+            {'product_stock': FieldValue.increment(value['quantity'] * -1)},
+          );
+        });
+
         Get.snackbar("Success", "Transaksi berhasil tersimpan",
             backgroundColor: Colors.green,
             colorText: Colors.white,

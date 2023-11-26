@@ -9,6 +9,7 @@ import 'package:point_of_sales/presentation/home/home_page.dart';
 import 'package:point_of_sales/presentation/login/login_page.dart';
 import 'package:point_of_sales/presentation/main/main_controller.dart';
 import 'package:point_of_sales/presentation/order/order_page.dart';
+import 'package:point_of_sales/presentation/profile/profile_page.dart';
 import 'package:point_of_sales/presentation/product/product_page.dart';
 
 import '../payment/payment_page.dart';
@@ -22,7 +23,7 @@ class MainContainerPage extends GetView<MainController> {
       HomePage(),
       ProductPage(),
       HistoryPage(),
-      LoginPage(),
+      ProfilePage(),
     ];
 
     return WillPopScope(

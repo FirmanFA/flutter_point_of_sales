@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:point_of_sales/presentation/history/history_controller.dart';
 import 'package:point_of_sales/presentation/history_detail/history_detail_controller.dart';
 import 'package:point_of_sales/presentation/home/home_controller.dart';
+import 'package:point_of_sales/presentation/invoice/invoice_page.dart';
 import 'package:point_of_sales/widget/default_app_bar.dart';
 import 'package:point_of_sales/widget/text_input_widget.dart';
 
@@ -48,7 +49,6 @@ class HistoryDetailPage extends StatelessWidget {
 
       return WillPopScope(
         onWillPop: () async {
-
           historyController.onInit();
           homeController.getLatest5TransactionData();
           homeController.getThisMonthTransactions();
@@ -58,6 +58,17 @@ class HistoryDetailPage extends StatelessWidget {
         },
         child: Scaffold(
           appBar: defaultAppBar("Detail Order", hasBack: true, actions: [
+            GestureDetector(
+                onTap: () async {
+                  if (controller.detailOrderData.value != null) {
+                    Get.to(() => InvoicePage(
+                        transactionData: controller.detailOrderData.value!));
+                  }
+                },
+                child: Icon(
+                  FontAwesomeIcons.download,
+                  size: 20,
+                )),
             PopupMenuButton(
               onSelected: (value) async {
                 if (value == 2) {
@@ -81,8 +92,8 @@ class HistoryDetailPage extends StatelessWidget {
                   );
                 }
               },
-              shape:
-                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
               itemBuilder: (BuildContext context) => [
                 const PopupMenuItem(
                   value: 2,
@@ -152,8 +163,8 @@ class HistoryDetailPage extends StatelessWidget {
                       child: ListView.separated(
                           padding: EdgeInsets.all(12),
                           itemBuilder: (context, index) {
-                            final orderedProduct = controller
-                                    .tempEditProduct[orderedProductKeys[index]] ??
+                            final orderedProduct = controller.tempEditProduct[
+                                    orderedProductKeys[index]] ??
                                 {};
 
                             return OrderedItemCard(
@@ -166,8 +177,8 @@ class HistoryDetailPage extends StatelessWidget {
                                     orderedProductKeys[index]);
                               },
                               onPlusClick: () {
-                                controller
-                                    .incrementProduct(orderedProductKeys[index]);
+                                controller.incrementProduct(
+                                    orderedProductKeys[index]);
                               },
                             );
                           },
@@ -207,7 +218,9 @@ class HistoryDetailPage extends StatelessWidget {
                           Spacer(),
                           AutoSizeText(
                             NumberFormat.simpleCurrency(
-                                    locale: "id", name: "Rp. ", decimalDigits: 0)
+                                    locale: "id",
+                                    name: "Rp. ",
+                                    decimalDigits: 0)
                                 .format(amountToPayForPending == 0
                                     ? detailOrderData?.get("total_amount") ?? 0
                                     : amountToPayForPending),
@@ -254,7 +267,8 @@ class HistoryDetailPage extends StatelessWidget {
                               children: [
                                 Text(
                                   GetUtils.capitalize(
-                                          detailOrderData?.get("status") ?? "") ??
+                                          detailOrderData?.get("status") ??
+                                              "") ??
                                       "",
                                   style: TextStyle(
                                     color: Colors.white,
@@ -284,7 +298,8 @@ class HistoryDetailPage extends StatelessWidget {
                                 });
                               }
 
-                              controller.setEditMode(!controller.editMode.value);
+                              controller
+                                  .setEditMode(!controller.editMode.value);
                             },
                             padding: EdgeInsets.all(12),
                             color: Colors.white,
@@ -315,7 +330,8 @@ class HistoryDetailPage extends StatelessWidget {
                               //   priceToPay: 1000,
                               // ));
 
-                              controller.setSelectedEditStatus(detailOrderData?.get("status"));
+                              controller.setSelectedEditStatus(
+                                  detailOrderData?.get("status"));
 
                               Get.bottomSheet(
                                   shape: RoundedRectangleBorder(
@@ -331,8 +347,9 @@ class HistoryDetailPage extends StatelessWidget {
                                           children: [
                                             GestureDetector(
                                               onTap: () {
-                                                controller.setSelectedEditStatus(
-                                                    "paid");
+                                                controller
+                                                    .setSelectedEditStatus(
+                                                        "paid");
                                               },
                                               child: Row(
                                                 children: [
@@ -346,8 +363,8 @@ class HistoryDetailPage extends StatelessWidget {
                                                       shape:
                                                           RoundedRectangleBorder(
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                30),
+                                                            BorderRadius
+                                                                .circular(30),
                                                       ),
                                                     ),
                                                     child: Row(
@@ -377,7 +394,8 @@ class HistoryDetailPage extends StatelessWidget {
                                                   Radio<String>(
                                                     value: 'paid',
                                                     groupValue: controller
-                                                        .selectedEditStatus.value,
+                                                        .selectedEditStatus
+                                                        .value,
                                                     onChanged: (value) {
                                                       controller
                                                           .setSelectedEditStatus(
@@ -392,8 +410,9 @@ class HistoryDetailPage extends StatelessWidget {
                                             ),
                                             GestureDetector(
                                               onTap: () {
-                                                controller.setSelectedEditStatus(
-                                                    "pending");
+                                                controller
+                                                    .setSelectedEditStatus(
+                                                        "pending");
                                               },
                                               child: Row(
                                                 children: [
@@ -403,13 +422,13 @@ class HistoryDetailPage extends StatelessWidget {
                                                         horizontal: 20,
                                                         vertical: 5),
                                                     decoration: ShapeDecoration(
-                                                      color:
-                                                          Colors.yellow.shade700,
+                                                      color: Colors
+                                                          .yellow.shade700,
                                                       shape:
                                                           RoundedRectangleBorder(
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                30),
+                                                            BorderRadius
+                                                                .circular(30),
                                                       ),
                                                     ),
                                                     child: Row(
@@ -439,11 +458,13 @@ class HistoryDetailPage extends StatelessWidget {
                                                   Radio<String>(
                                                     value: 'pending',
                                                     groupValue: controller
-                                                        .selectedEditStatus.value,
+                                                        .selectedEditStatus
+                                                        .value,
                                                     onChanged: (value) {
                                                       controller
                                                           .setSelectedEditStatus(
-                                                              value ?? "pending");
+                                                              value ??
+                                                                  "pending");
                                                     },
                                                   )
                                                 ],
@@ -454,8 +475,9 @@ class HistoryDetailPage extends StatelessWidget {
                                             ),
                                             GestureDetector(
                                               onTap: () {
-                                                controller.setSelectedEditStatus(
-                                                    "cancel");
+                                                controller
+                                                    .setSelectedEditStatus(
+                                                        "cancel");
                                               },
                                               child: Row(
                                                 children: [
@@ -469,8 +491,8 @@ class HistoryDetailPage extends StatelessWidget {
                                                       shape:
                                                           RoundedRectangleBorder(
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                30),
+                                                            BorderRadius
+                                                                .circular(30),
                                                       ),
                                                     ),
                                                     child: Row(
@@ -500,11 +522,13 @@ class HistoryDetailPage extends StatelessWidget {
                                                   Radio<String>(
                                                     value: 'cancel',
                                                     groupValue: controller
-                                                        .selectedEditStatus.value,
+                                                        .selectedEditStatus
+                                                        .value,
                                                     onChanged: (value) {
                                                       controller
                                                           .setSelectedEditStatus(
-                                                              value ?? "cancel");
+                                                              value ??
+                                                                  "cancel");
                                                     },
                                                   )
                                                 ],
@@ -525,181 +549,169 @@ class HistoryDetailPage extends StatelessWidget {
                                                             .value ==
                                                         "paid") {
                                                       Get.defaultDialog(
-                                                          title: "Bayar Pesanan",
-                                                          confirmTextColor: Colors.white,
+                                                          title:
+                                                              "Bayar Pesanan",
+                                                          confirmTextColor:
+                                                              Colors.white,
                                                           textConfirm: "Bayar",
                                                           onConfirm: () {
                                                             controller
                                                                 .updateTransactionStatus(
-                                                                orderId, () {
+                                                                    orderId,
+                                                                    () {
                                                               Get.back();
                                                               Get.back();
                                                               controller
-                                                                  .getOrderDetail(orderId);
+                                                                  .getOrderDetail(
+                                                                      orderId);
                                                             });
                                                           },
-                                                          content:Obx(() =>  Column(
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                            children: [
-                                                              AutoSizeText(
-                                                                "Jumlah Bayar: ${NumberFormat.simpleCurrency(locale: "id", name: "Rp. ", decimalDigits: 0).format(detailOrderData?.get("total_amount") ?? 0)}",
-                                                                style: TextStyle(
-                                                                  color: Color(
-                                                                      0xFF2A3256),
-                                                                  fontSize: 14,
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                height: 12,
-                                                              ),
-                                                              CustomTextInput(
-                                                                label:
-                                                                "Masukkan jumlah bayar",
-                                                                hint: "10.000",
-                                                                inputType:
-                                                                TextInputType
-                                                                    .number,
-                                                                controller: controller
-                                                                    .paidAmountCon,
-                                                                onChanged:
-                                                                    (text) {
-                                                                  final paidPriceValue = text
-                                                                      .replaceAll(
-                                                                      "Rp. ",
-                                                                      "")
-                                                                      .replaceAll(
-                                                                      ".",
-                                                                      "");
+                                                          content:
+                                                              Obx(() => Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      AutoSizeText(
+                                                                        "Jumlah Bayar: ${NumberFormat.simpleCurrency(locale: "id", name: "Rp. ", decimalDigits: 0).format(detailOrderData?.get("total_amount") ?? 0)}",
+                                                                        style:
+                                                                            TextStyle(
+                                                                          color:
+                                                                              Color(0xFF2A3256),
+                                                                          fontSize:
+                                                                              14,
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height:
+                                                                            12,
+                                                                      ),
+                                                                      CustomTextInput(
+                                                                        label:
+                                                                            "Masukkan jumlah bayar",
+                                                                        hint:
+                                                                            "10.000",
+                                                                        inputType:
+                                                                            TextInputType.number,
+                                                                        controller:
+                                                                            controller.paidAmountCon,
+                                                                        onChanged:
+                                                                            (text) {
+                                                                          final paidPriceValue = text.replaceAll("Rp. ", "").replaceAll(
+                                                                              ".",
+                                                                              "");
 
-                                                                  controller
-                                                                      .change
-                                                                      .value = (int.parse(paidPriceValue.isEmpty
-                                                                      ? "0"
-                                                                      : paidPriceValue) -
-                                                                      detailOrderData
-                                                                          ?.get("total_amount"))
-                                                                      .toInt();
+                                                                          controller
+                                                                              .change
+                                                                              .value = (int.parse(paidPriceValue.isEmpty ? "0" : paidPriceValue) -
+                                                                                  detailOrderData?.get("total_amount"))
+                                                                              .toInt();
 
-                                                                  controller
-                                                                      .paidAmountCon
-                                                                      .text = NumberFormat.simpleCurrency(
-                                                                      locale:
-                                                                      "id",
-                                                                      name:
-                                                                      "Rp. ",
-                                                                      decimalDigits:
-                                                                      0)
-                                                                      .format(int.parse(paidPriceValue
-                                                                      .isEmpty
-                                                                      ? "0"
-                                                                      : paidPriceValue));
-                                                                },
-                                                              ),
-                                                              SizedBox(
-                                                                height: 8,
-                                                              ),
-                                                              MaterialButton(
-                                                                onPressed: () {
-                                                                  controller
-                                                                      .paidAmountCon
-                                                                      .text = NumberFormat.simpleCurrency(
-                                                                      locale:
-                                                                      "id",
-                                                                      name:
-                                                                      "Rp. ",
-                                                                      decimalDigits:
-                                                                      0)
-                                                                      .format(
-                                                                      detailOrderData?.get("total_amount") ??
-                                                                          0);
+                                                                          controller
+                                                                              .paidAmountCon
+                                                                              .text = NumberFormat.simpleCurrency(locale: "id", name: "Rp. ", decimalDigits: 0).format(int.parse(paidPriceValue
+                                                                                  .isEmpty
+                                                                              ? "0"
+                                                                              : paidPriceValue));
+                                                                        },
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height:
+                                                                            8,
+                                                                      ),
+                                                                      MaterialButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          controller
+                                                                              .paidAmountCon
+                                                                              .text = NumberFormat.simpleCurrency(locale: "id", name: "Rp. ", decimalDigits: 0).format(detailOrderData
+                                                                                  ?.get("total_amount") ??
+                                                                              0);
 
-                                                                  final paidPriceValue = controller
-                                                                      .paidAmountCon
-                                                                      .text
-                                                                      .replaceAll(
-                                                                      "Rp. ",
-                                                                      "")
-                                                                      .replaceAll(
-                                                                      ".",
-                                                                      "");
+                                                                          final paidPriceValue = controller
+                                                                              .paidAmountCon
+                                                                              .text
+                                                                              .replaceAll("Rp. ", "")
+                                                                              .replaceAll(".", "");
 
-                                                                  controller
-                                                                      .change
-                                                                      .value = (int.parse(paidPriceValue.isEmpty
-                                                                      ? "0"
-                                                                      : paidPriceValue) -
-                                                                      detailOrderData
-                                                                          ?.get("total_amount"))
-                                                                      .toInt();
-                                                                },
-                                                                padding:
-                                                                EdgeInsets
-                                                                    .all(6),
-                                                                minWidth: 0,
-                                                                color:
-                                                                primaryColor,
-                                                                shape: RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                        12)),
-                                                                child: Text(
-                                                                  'Uang Pas',
-                                                                  textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                                  style:
-                                                                  TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize: 10,
-                                                                    fontFamily:
-                                                                    'Rubik',
-                                                                    fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                    height: 0,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                height: 12,
-                                                              ),
-                                                              controller.change
-                                                                  .value ==
-                                                                  0
-                                                                  ? const SizedBox
-                                                                  .shrink()
-                                                                  : AutoSizeText(
-                                                                "Kembalian: ${NumberFormat.simpleCurrency(locale: "id", name: "Rp. ", decimalDigits: 0).format(controller.change.value)}",
-                                                                style:
-                                                                TextStyle(
-                                                                  color: Color(
-                                                                      0xFF2A3256),
-                                                                  fontSize:
-                                                                  20,
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          )));
+                                                                          controller
+                                                                              .change
+                                                                              .value = (int.parse(paidPriceValue.isEmpty ? "0" : paidPriceValue) -
+                                                                                  detailOrderData?.get("total_amount"))
+                                                                              .toInt();
+                                                                        },
+                                                                        padding:
+                                                                            EdgeInsets.all(6),
+                                                                        minWidth:
+                                                                            0,
+                                                                        color:
+                                                                            primaryColor,
+                                                                        shape: RoundedRectangleBorder(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(12)),
+                                                                        child:
+                                                                            Text(
+                                                                          'Uang Pas',
+                                                                          textAlign:
+                                                                              TextAlign.center,
+                                                                          style:
+                                                                              TextStyle(
+                                                                            color:
+                                                                                Colors.white,
+                                                                            fontSize:
+                                                                                10,
+                                                                            fontFamily:
+                                                                                'Rubik',
+                                                                            fontWeight:
+                                                                                FontWeight.w500,
+                                                                            height:
+                                                                                0,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height:
+                                                                            12,
+                                                                      ),
+                                                                      controller.change.value ==
+                                                                              0
+                                                                          ? const SizedBox
+                                                                              .shrink()
+                                                                          : AutoSizeText(
+                                                                              "Kembalian: ${NumberFormat.simpleCurrency(locale: "id", name: "Rp. ", decimalDigits: 0).format(controller.change.value)}",
+                                                                              style: TextStyle(
+                                                                                color: Color(0xFF2A3256),
+                                                                                fontSize: 20,
+                                                                                fontWeight: FontWeight.w500,
+                                                                              ),
+                                                                            ),
+                                                                    ],
+                                                                  )));
+                                                    }else{
+                                                      controller
+                                                          .updateTransactionStatus(
+                                                          orderId, () {
+
+                                                        Get.back();
+                                                        controller.getOrderDetail(
+                                                            orderId);
+                                                      });
                                                     }
-                                                  }else{
+                                                  } else {
+
+
+
                                                     controller
                                                         .updateTransactionStatus(
-                                                        orderId, () {
+                                                            orderId, () {
+
                                                       Get.back();
-                                                      controller
-                                                          .getOrderDetail(orderId);
+                                                      controller.getOrderDetail(
+                                                          orderId);
                                                     });
                                                   }
-
-
                                                 },
                                                 padding: EdgeInsets.all(12),
                                                 color: Colors.white,

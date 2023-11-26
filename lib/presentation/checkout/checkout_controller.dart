@@ -30,10 +30,10 @@ class CheckoutController extends GetxController {
         'status': "pending",
         'timestamp': Timestamp.now(),
         'total_amount': priceToPay
-      }).then((value) {
-        orderedProduct.forEach((key, value) {
+      }).then((value)  {
+        orderedProduct.forEach((key, value) async {
           debugPrint("map data $key $value");
-          fDb.collection("products").doc(key).update(
+          await fDb.collection("products").doc(key).update(
             {'product_stock': FieldValue.increment(value['quantity'] * -1)},
           );
         });
