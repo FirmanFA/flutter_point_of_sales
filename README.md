@@ -1,16 +1,27 @@
-# point_of_sales
+# Point Of Sales
 
-A new Flutter project.
+## Struktur Halaman
 
-## Getting Started
+### Main Navigation
+- Dashboard
+    - HomePage.dart
+- Product
+    - ProductPage.dart
+- Transaction History
+    - HistoryPage.dart
+- Profile
+    - ProfilePage.dart
 
-This project is a starting point for a Flutter application.
+### Transaction
+- Make New Order
+    - order_page.dart
+- Checkout
+    - checkout_page.dart
+- Payment
+    - payment_page.dart
+- History Detail
+    - history_detail_page.dart
+- PDF Report
+    - report_page.dart
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
