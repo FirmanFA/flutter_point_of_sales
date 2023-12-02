@@ -19,6 +19,8 @@ class MainContainerPage extends GetView<MainController> {
 
   @override
   Widget build(BuildContext context) {
+
+    /// list of page in bottom navigation bar
     final List<Widget> viewContainer = [
       HomePage(),
       ProductPage(),
@@ -83,6 +85,7 @@ class MainContainerPage extends GetView<MainController> {
                   activeIndex: controller.currentNavigation.value,
                   gapLocation: GapLocation.center,
                   notchSmoothness: NotchSmoothness.smoothEdge,
+                  /// change page when bottom navigation is clicked
                   onTap: (index) => controller.setNav(nav: index)),
             ),
           )),

@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import '../../constant/constant.dart';
 
 class LoginController extends GetxController {
-
   var isLoading = false.obs;
   var emailCon = TextEditingController();
   var passwordCon = TextEditingController();
@@ -18,27 +17,21 @@ class LoginController extends GetxController {
 
     await Future.delayed(Duration(milliseconds: 100));
 
+    /// get data in collection 'users' with email and password from textfield
     await fDb
         .collection('users')
         .where('email', isEqualTo: email)
         .where('password', isEqualTo: password)
         .get()
         .then((querySnapshot) {
-
-      // print("Successfully completed");
-      // for (var docSnapshot in querySnapshot.docs) {
-      //   print('${docSnapshot.id} => ${docSnapshot.data()}');
-      // }
-      //
-      //     debugPrint("data doccs ${querySnapshot}");
-
+      /// return true if data exist, false otherwise
       if (querySnapshot.docs.isNotEmpty) {
-        isLogin =  true;
+        isLogin = true;
       } else {
-        isLogin =  false;
+        isLogin = false;
       }
     });
-    isLoading.value =false ;
+    isLoading.value = false;
     return isLogin;
   }
 }

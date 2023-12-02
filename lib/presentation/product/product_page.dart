@@ -10,7 +10,6 @@ import 'package:point_of_sales/presentation/product/product_controller.dart';
 import 'package:point_of_sales/widget/card/product_card.dart';
 import 'package:point_of_sales/widget/default_app_bar.dart';
 
-import '../../widget/card/transaction_card.dart';
 import '../../widget/text_input_widget.dart';
 
 class ProductPage extends GetView<ProductController> {
@@ -57,59 +56,6 @@ class ProductPage extends GetView<ProductController> {
                 SizedBox(
                   height: 22,
                 ),
-                // TabBar(
-                //   indicatorColor: Colors.transparent,
-                //   controller: controller.tabController,
-                //   isScrollable: true,
-                //   labelPadding: const EdgeInsets.only(right: 12),
-                //   padding: const EdgeInsets.only(left: 0),
-                //   tabs: List.generate(
-                //     controller.categoryCount.value,
-                //     (index) => Tab(
-                //         child: InkWell(
-                //       onTap: () {
-                //         // kendaraanTabController.animateTo(0);
-                //         // kendaraanPageController.jumpToPage(0);
-                //
-                //         controller.tabController.animateTo(index);
-                //
-                //         controller.setSelectedCategory(index);
-                //       },
-                //       child: Container(
-                //         padding: const EdgeInsets.symmetric(
-                //             horizontal: 12, vertical: 8),
-                //         decoration: ShapeDecoration(
-                //           color: index == controller.selectedCategory.value
-                //               ? primaryColor
-                //               : Colors.white,
-                //           shape: RoundedRectangleBorder(
-                //             side: BorderSide(
-                //                 width: 0.50,
-                //                 color:
-                //                     index == controller.selectedCategory.value
-                //                         ? primaryColor
-                //                         : const Color(0xFFE0E0E0)),
-                //             borderRadius: BorderRadius.circular(12),
-                //           ),
-                //         ),
-                //         child: Center(
-                //           child: Text(
-                //             toBeginningOfSentenceCase(
-                //                     controller.productCategoryList[index]) ??
-                //                 "",
-                //             style: TextStyle(
-                //               color: index == controller.selectedCategory.value
-                //                   ? Colors.white
-                //                   : const Color(0xFF757575),
-                //               fontSize: 14,
-                //               fontWeight: FontWeight.w500,
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //     )),
-                //   ),
-                // ),
 
                 Text(
                   "Filter Kategori",
@@ -135,6 +81,7 @@ class ProductPage extends GetView<ProductController> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
+                    /// dropdown to select category
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<int>(
                         value: controller.selectedCategory.value,

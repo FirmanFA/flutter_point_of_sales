@@ -5,18 +5,23 @@ import 'package:get/get.dart';
 import 'package:point_of_sales/constant/constant.dart';
 
 class PaymentController extends GetxController {
+
+  /// to store input name
   final nameCon = TextEditingController();
 
+  /// to store buyer paid amount
   final paidAmountCon = TextEditingController();
 
-  //uang kembalian
+  /// store buyer change
   var change = 0.obs;
 
+  /// function to create a paid transaction
   Future savePaidTransaction(
       {required String name,
       required Map orderedProduct,
       required int totalAmount}) async {
 
+    /// get last transaction data to get last order id
     await fDb
         .collection("transactions")
         .orderBy("order_id", descending: true)
@@ -29,6 +34,7 @@ class PaymentController extends GetxController {
         lastOrderId = element.get("order_id");
       }
 
+      /// add transaction to firebase
       await fDb.collection('transactions').add({
         'order_id': (lastOrderId ?? 0) + 1,
         'name': name,
@@ -38,6 +44,7 @@ class PaymentController extends GetxController {
         'total_amount': totalAmount
       }).then((value) {
 
+        /// update product stock for every product sold in this transaction
         orderedProduct.forEach((key, value) async {
           debugPrint("map data $key $value");
           await fDb.collection("products").doc(key).update(
@@ -45,6 +52,7 @@ class PaymentController extends GetxController {
           );
         });
 
+        /// show success message when done
         Get.snackbar("Success", "Transaksi berhasil tersimpan",
             backgroundColor: Colors.green,
             colorText: Colors.white,

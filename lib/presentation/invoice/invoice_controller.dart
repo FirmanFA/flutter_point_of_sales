@@ -7,16 +7,21 @@ import 'package:pdf/pdf.dart';
 import 'package:point_of_sales/utils/transaction_pdf_generator.dart';
 
 class InvoiceController extends GetxController {
+
+  /// store pdf file to download
   var pdfFile = File("").obs;
 
+  /// function to generate pdf file from a transaction data
   generatePdfFile(DocumentSnapshot transactionData) async {
-    final List<Product> pdfProductList = [];
 
+    /// get product from transaction data to convert it to pdf readable format
+    final List<Product> pdfProductList = [];
     transactionData.get("products").forEach((key, value) {
       pdfProductList.add(Product("", value['product_name'],
           double.parse("${value['product_price']}"), value['quantity']));
     });
 
+    /// invoice data
     final invoice = Invoice(
       invoiceNumber: "INV//#${transactionData.get("order_id")}",
       products: pdfProductList,
@@ -31,10 +36,12 @@ class InvoiceController extends GetxController {
       filterType: "",
     );
 
+    /// function to generate the pdf file
     final file = await generateInvoicePdf(invoice: invoice);
     _setPdfFile(file);
   }
 
+  /// set pdf file
   _setPdfFile(File file) {
     pdfFile.value = file;
   }

@@ -53,20 +53,28 @@ class LoginPage extends GetView<LoginController> {
               Obx(() => SizedBox(
                     width: MediaQuery.of(context).size.width,
                     child: PrimaryButton(
+                      /// custom widget to show a loading indicator when the label is empty ("")
                       label: controller.isLoading.value ? "" : "Login",
                       onPressed: () async {
+                        /// call a login function in controller
                         await controller
                             .login(controller.emailCon.text,
                                 controller.passwordCon.text)
                             .then((value) {
+
+                          /// value is a boolean return, true if login is valid, false otherwise
                           if (value) {
-                            Get.off(()=>MainContainerPage());
+                            /// go to main page when login is valid
+                            Get.off(() => MainContainerPage());
                           } else {
+
+                            /// show an error message when login failed
                             Get.snackbar("Login Failed",
                                 "Make sure password and email are correct",
                                 backgroundColor: Colors.red,
                                 colorText: Colors.white,
-                                margin: EdgeInsets.symmetric(vertical: 26, horizontal: 20),
+                                margin: EdgeInsets.symmetric(
+                                    vertical: 26, horizontal: 20),
                                 snackPosition: SnackPosition.BOTTOM);
                           }
                         });

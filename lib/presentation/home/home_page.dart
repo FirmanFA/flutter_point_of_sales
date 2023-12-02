@@ -27,10 +27,6 @@ class HomePage extends StatelessWidget {
 
     controller.onInit();
 
-    // controller.getThisMonthTransactions();
-    // controller.getLatest5TransactionData();
-    // controller.getSmallestStockProduct();
-
     return Obx(() => Scaffold(
           appBar: defaultAppBar("Dashboard"),
           backgroundColor: Colors.white,
@@ -82,6 +78,8 @@ class HomePage extends StatelessWidget {
                                     top: 24,
                                     bottom: 4,
                                   ),
+                                  /// code to show the
+                                  /// chart of this month transactions data
                                   child: LineChart(
                                     mainData(gradientColors,
                                         transactionCount: controller
@@ -217,6 +215,7 @@ class HomePage extends StatelessWidget {
                                         height: 18,
                                       ),
                                       AutoSizeText(
+                                        /// show this month income total
                                         NumberFormat.simpleCurrency(
                                                 locale: "id",
                                                 name: "Rp. ",
@@ -271,6 +270,7 @@ class HomePage extends StatelessWidget {
                                       const SizedBox(
                                         height: 18,
                                       ),
+                                      /// show this month transaction count
                                       AutoSizeText(
                                         controller.transactionCount.string,
                                         style: const TextStyle(
@@ -330,6 +330,7 @@ class HomePage extends StatelessWidget {
                                         height: 18,
                                       ),
                                       AutoSizeText(
+                                        /// show this month product sold
                                         controller.productSold.string,
                                         style: const TextStyle(
                                           color: Colors.white,
@@ -381,6 +382,7 @@ class HomePage extends StatelessWidget {
                                       const SizedBox(
                                         height: 18,
                                       ),
+                                      /// show product that need to restock
                                       AutoSizeText(
                                         controller.productWithSmallestStock.value
                                                 ?.get("product_name") ??
@@ -453,6 +455,7 @@ class HomePage extends StatelessWidget {
                         const SizedBox(
                           height: 12,
                         ),
+                        /// show latest 5 transaction data
                         ListView.separated(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
