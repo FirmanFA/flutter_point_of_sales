@@ -1,12 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart' as dio_client;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 
 import '../../constant/constant.dart';
 
 class HomeController extends GetxController {
+
+  List<Placemark> placemarks = [];
+
   /// variable to store this month transactions list
   var thisMonthTransaction = RxList<QueryDocumentSnapshot>([]);
 
@@ -45,6 +52,7 @@ class HomeController extends GetxController {
     getThisMonthTransactions();
     getSmallestStockProduct();
   }
+
 
   /// this function used to get this month transactions
   getThisMonthTransactions() async {
@@ -220,4 +228,5 @@ class HomeController extends GetxController {
       }
     });
   }
+
 }

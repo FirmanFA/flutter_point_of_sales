@@ -9,14 +9,9 @@ class LoginController extends GetxController {
   var passwordCon = TextEditingController();
 
   Future<bool> login(String email, String password) async {
-    //do login
-
     bool isLogin = false;
-
     isLoading.value = true;
-
     await Future.delayed(Duration(milliseconds: 100));
-
     /// get data in collection 'users' with email and password from textfield
     await fDb
         .collection('users')

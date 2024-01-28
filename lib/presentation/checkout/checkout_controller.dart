@@ -51,7 +51,6 @@ class CheckoutController extends GetxController {
 
           /// update product stock according to ordered quantity
           await fDb.collection("products").doc(key).update(
-
             /// FieldValue is the original field of product_stock
             /// since firebase don't support decrement,
             /// * -1 is to make the increment minus, so the stock can decrease
